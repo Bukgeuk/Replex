@@ -2,10 +2,11 @@ from __future__ import annotations
 from enum import Enum
 from xmlrpc.client import Boolean
 import pygame, sys
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Optional
 
 from components.Screen import Screen
-import api.key, api.mouse
+from components.Base import Positioning
+import api.key, api.mouse, api.font
 
 class EventType(Enum):
     INIT = 0
@@ -26,10 +27,12 @@ class App:
         self.__framerate: int = 0
         self.__eventListeners: Dict[EventType, List[Callable[[App], None]]] = {}
         self.__screen: Screen = initialScreen
+        self.__pygameSurface: Optional[pygame.surface.Surface] = None
 
     def __occurEvent(self, event: EventType) -> None:
-        for callback in self.__eventListeners[event]:
-            callback(self)
+        if event in self.__eventListeners:
+            for callback in self.__eventListeners[event]:
+                callback(self)
     
     def run(self) -> None:
         self.__occurEvent(EventType.INIT)
@@ -57,7 +60,9 @@ class App:
 
             # Drawing
             self.__screen.draw()
-            pygame.display.update()
+            if self.__pygameSurface is not None:
+                self.__pygameSurface.blit(self.__screen.getPygameSurface(), (0, 0))
+                pygame.display.update()
             
             # Framerate
             if not self.__framerate == 0:
@@ -85,7 +90,7 @@ class App:
         if vsync:
             vs = 1
 
-        pygame.display.set_mode((width, height), flags, vsync=vs)
+        self.__pygameSurface = pygame.display.set_mode((width, height), flags, vsync=vs)
 
     def toggleFullscreen(self) -> None:
         pygame.display.toggle_fullscreen()

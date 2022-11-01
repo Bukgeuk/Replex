@@ -1,22 +1,16 @@
 from abc import ABCMeta, abstractmethod
+from typing import Tuple
 
-class Screen(metaclass=ABCMeta):
+from components.Surface import Surface
+
+class Screen(Surface, metaclass=ABCMeta):
+    def __init__(self, size: Tuple[int, int]) -> None:
+        super().__init__((0, 0), size)
+
     def onEnterScreen(self) -> None:
         pass
 
     def onEscapeScreen(self) -> None:
-        pass
-
-    def onMouseDown(self, event) -> None:
-        pass
-
-    def onMouseUp(self, event) -> None:
-        pass
-
-    def onMouseWheel(self, event) -> None:
-        pass
-
-    def onMouseMove(self, event) -> None:
         pass
 
     def onKeyDown(self, event) -> None:
@@ -26,5 +20,5 @@ class Screen(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def draw(self) -> None:
+    def draw(self):
         pass
