@@ -1,9 +1,12 @@
 from enum import Enum
-import pygame
 from typing import Tuple, final
 
-from components.Base import InteractiveDisplayObject, Positioning
+import pygame
+
 import api.font
+from components.Base import InteractiveDisplayObject, Positioning
+from components.Image import Image
+
 
 class Surface(InteractiveDisplayObject):
     def __init__(self, pos: Tuple[int, int], size: Tuple[int, int]) -> None:
@@ -41,3 +44,7 @@ class Surface(InteractiveDisplayObject):
         font = api.font.getFont(fontName)
         if font is not None:
             self.drawTextByFont(pos, text, font, color, antialias, positioning)
+
+    @final
+    def drawImage(self, image: Image):
+        self.__surface.blit(image.getPygameImage(), image.getPos())
