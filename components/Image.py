@@ -17,4 +17,5 @@ class Image(InteractiveDisplayObject):
 
     def rescale(self, size: Tuple[int, int]) -> Image:
         self.__image = pygame.transform.scale(self.__image, size)
+        self.setSize(size)
         return self
