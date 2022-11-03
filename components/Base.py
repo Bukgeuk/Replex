@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from enum import Enum
 from typing import Tuple, final
+
 
 class Positioning(Enum):
     CENTER = 0
@@ -13,8 +16,9 @@ class DisplayObject:
         self.__pos: Tuple[int, int] = pos
 
     @final
-    def setPos(self, pos: Tuple[int, int]) -> None:
+    def setPos(self, pos: Tuple[int, int]) -> DisplayObject:
         self.__pos = pos
+        return self
 
     @final
     def getPos(self) -> Tuple[int, int]:
@@ -33,8 +37,9 @@ class InteractiveDisplayObject(DisplayObject):
         return self.__size
 
     @final
-    def setSize(self, size: Tuple[int, int]) -> None:
+    def setSize(self, size: Tuple[int, int]) -> InteractiveDisplayObject:
         self.__size = size
+        return self
 
     def doEventSpread(self, pos: Tuple[int, int]) -> bool:
         return (self.__pos[0] < pos[0] < self.__pos[0] + self.__size[0]) and (self.__pos[1] < pos[1] < self.__pos[1] + self.__size[1])
