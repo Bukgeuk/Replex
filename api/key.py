@@ -1,5 +1,5 @@
-from xmlrpc.client import Boolean
 import pygame
+
 
 def getKeyFocused():
     return pygame.key.get_focused()
@@ -10,12 +10,12 @@ def getKeyState():
 def getModifierKeyState():
     return pygame.key.get_mods()
 
-def isModifierKeyStateContain(state, target) -> Boolean:
+def isModifierKeyStateContain(state, target) -> bool:
     '''
     * state: event.mod or getModifierKeyState()
     * target: pygame.{KEY}
     '''
-    return Boolean(state & target)
+    return bool(state & target)
 
 def getKeyCodeByString(string: str) -> int:
     return pygame.key.key_code(string)

@@ -1,6 +1,6 @@
-from optparse import Option
+from typing import Dict, Optional
+
 import pygame
-from typing import Optional, Dict
 
 __fontStorage: Dict[str, pygame.font.Font] = {}
 

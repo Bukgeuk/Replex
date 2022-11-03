@@ -1,12 +1,18 @@
 from __future__ import annotations
+
+import sys
 from enum import Enum
-from xmlrpc.client import Boolean
-import pygame, sys
 from typing import Callable, Dict, List, Optional
 
-from components.Screen import Screen
+import pygame
+
+import api.font
+import api.key
+import api.mouse
 from components.Base import Positioning
-import api.key, api.mouse, api.font
+from components.Image import Image
+from components.Screen import Screen
+
 
 class EventType(Enum):
     INIT = 0
@@ -46,9 +52,11 @@ class App:
                     self.__occurEvent(EventType.QUIT)
                     self.terminate()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    self.__screen.onMouseDown(event)
+                    if not (event.button == 4 or event.button == 5):
+                        self.__screen.onMouseDown(event)
                 elif event.type == pygame.MOUSEBUTTONUP:
-                    self.__screen.onMouseUp(event)
+                    if not (event.button == 4 or event.button == 5):
+                        self.__screen.onMouseUp(event)
                 elif event.type == pygame.MOUSEWHEEL:
                     self.__screen.onMouseWheel(event)
                 elif event.type == pygame.MOUSEMOTION:
@@ -60,20 +68,23 @@ class App:
 
             # Drawing
             self.__screen.draw()
-            if self.__pygameSurface is not None:
-                self.__pygameSurface.blit(self.__screen.getPygameSurface(), (0, 0))
-                pygame.display.update()
+
+            assert self.__pygameSurface is not None, 'Use setWindowMode before running'
+
+            self.__pygameSurface.blit(self.__screen.getPygameSurface(), (0, 0))
+            pygame.display.update()         
             
             # Framerate
             if not self.__framerate == 0:
                 self.__clock.tick(self.__framerate)
                 
         pygame.quit()
+        sys.exit()
 
     def setTitle(self, title: str) -> None:
         pygame.display.set_caption(title)
 
-    def setWindowMode(self, width: int, height: int, displayMode: DisplayMode = DisplayMode.WINDOWED, resizable: Boolean = False, vsync: Boolean = False) -> None:
+    def setWindowMode(self, width: int, height: int, displayMode: DisplayMode = DisplayMode.WINDOWED, resizable: bool = False, vsync: bool = False) -> None:
         flags = 0
         vs = 0
 

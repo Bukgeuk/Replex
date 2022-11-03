@@ -3,6 +3,7 @@ from typing import Tuple
 
 from components.Surface import Surface
 
+
 class Screen(Surface, metaclass=ABCMeta):
     def __init__(self, size: Tuple[int, int]) -> None:
         super().__init__((0, 0), size)
