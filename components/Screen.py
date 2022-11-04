@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Tuple
+from typing import Tuple, final
 
 from components.Surface import Surface
 
@@ -22,4 +22,8 @@ class Screen(Surface, metaclass=ABCMeta):
 
     @abstractmethod
     def draw(self):
+        pass
+
+    @final
+    def _tick(self):
         pass

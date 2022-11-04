@@ -15,7 +15,7 @@ from components.Screen import Screen
 
 
 class EventType(Enum):
-    INIT = 0
+    RUN = 0
     QUIT = 1
 
 class DisplayMode(Enum):
@@ -25,14 +25,14 @@ class DisplayMode(Enum):
     HIDDEN = 3
 
 class App:
-    def __init__(self, initialScreen) -> None:
+    def __init__(self) -> None:
         pygame.init()
 
         self.__terminate = False
         self.__clock = pygame.time.Clock()
         self.__framerate: int = 0
         self.__eventListeners: Dict[EventType, List[Callable[[App], None]]] = {}
-        self.__screen: Screen = initialScreen
+        self.__screen: Optional[Screen]
         self.__pygameSurface: Optional[pygame.surface.Surface] = None
 
     def __occurEvent(self, event: EventType) -> None:
@@ -40,8 +40,10 @@ class App:
             for callback in self.__eventListeners[event]:
                 callback(self)
     
-    def run(self) -> None:
-        self.__occurEvent(EventType.INIT)
+    def run(self, initialScreen: Screen) -> None:
+        self.__screen = initialScreen
+
+        self.__occurEvent(EventType.RUN)
         self.__screen.onEnterScreen()
 
         while not self.__terminate:
@@ -67,6 +69,7 @@ class App:
                     self.__screen.onKeyUp(event)
 
             # Drawing
+            self.__screen._tick()
             self.__screen.draw()
 
             assert self.__pygameSurface is not None, 'Use setWindowMode before running'
@@ -113,7 +116,8 @@ class App:
         return self.__clock.get_fps()
 
     def setScreen(self, screen: Screen) -> None:
-        self.__screen.onEscapeScreen()
+        if self.__screen is not None:
+            self.__screen.onEscapeScreen()
         self.__screen = screen
         self.__screen.onEnterScreen()
 
