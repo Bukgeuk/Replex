@@ -9,6 +9,7 @@ import pygame
 import api.font
 import api.key
 import api.mouse
+from components.Audio import Audio
 from components.Base import Positioning
 from components.Image import Image
 from components.Screen import Screen
