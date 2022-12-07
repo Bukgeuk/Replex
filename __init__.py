@@ -6,13 +6,14 @@ from typing import Callable, Dict, List, Optional
 
 import pygame
 
-import api.font
-import api.key
-import api.mouse
-from components.Audio import Audio
-from components.Base import Positioning
-from components.Image import Image
-from components.Screen import Screen
+from .api import font
+from .api import key
+from .api import mouse
+from .api import app
+from .components.Audio import Audio
+from .components.Base import Positioning, Pos
+from .components.Image import Image, DynamicImage
+from .components.Screen import Screen
 
 
 class EventType(Enum):
@@ -48,6 +49,8 @@ class App:
         self.__screen.onEnterScreen()
 
         while not self.__terminate:
+            app.renewFramerate(self.__framerate)
+
             # Event handling
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -70,7 +73,7 @@ class App:
                     self.__screen.onKeyUp(event)
 
             # Drawing
-            self.__screen._tick()
+            self.__screen.tick()
             self.__screen.draw()
 
             assert self.__pygameSurface is not None, 'Use setWindowMode before running'
@@ -114,7 +117,7 @@ class App:
         self.__framerate = framerate
 
     def getCurrentFramerate(self) -> float:
-        return self.__clock.get_fps()
+        return self.__framerate
 
     def setScreen(self, screen: Screen) -> None:
         if self.__screen is not None:

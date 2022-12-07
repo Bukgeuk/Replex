@@ -1,4 +1,3 @@
-from xmlrpc.client import Boolean
 import pygame
 
 def getMousePressed():
@@ -11,10 +10,10 @@ def getMousePos():
 def setMousePos(x: float, y: float):
     pygame.mouse.set_pos(x, y)
 
-def setMouseVisible(value: Boolean):
+def setMouseVisible(value: bool):
     pygame.mouse.set_visible(value)
 
-def getMouseVisible() -> Boolean:
+def getMouseVisible() -> bool:
     return pygame.mouse.get_visible()
 
 def getMouseFocused():

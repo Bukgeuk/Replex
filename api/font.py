@@ -2,7 +2,7 @@ from typing import Dict, Optional, Tuple
 
 import pygame
 
-from components.Image import Image
+from ..components.Image import Image
 
 __fontStorage: Dict[str, pygame.font.Font] = {}
 
