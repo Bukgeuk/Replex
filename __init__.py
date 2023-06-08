@@ -6,10 +6,10 @@ from typing import Callable, Dict, List, Optional
 
 import pygame
 
-from .api import font
-from .api import key
-from .api import mouse
-from .api import app
+from .utils import font
+from .utils import key
+from .utils import mouse
+from .utils import app
 from .components.Audio import Audio
 from .components.Base import Positioning, Pos, EventType
 from .components.Image import Image, DynamicImage

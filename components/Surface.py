@@ -3,10 +3,11 @@ from typing import List, Optional, final
 
 import pygame
 
-from ..api.font import getFont
+from ..utils.font import getFont
 from .Base import InteractiveDisplayObject, Positioning, DynamicObject, Pos, Color
 from .Image import Image
 from .Button import Button
+from .TextBlock import TextBlock
 
 
 class Surface(InteractiveDisplayObject):
@@ -127,6 +128,17 @@ class Surface(InteractiveDisplayObject):
             self.drawTextByFont((pos[0] + (size[0] / 2), pos[1] + (size[1] / 2)), btn.getText(), font, btn.getTextColor(), positioning=Positioning.CENTER)
 
         self.__eventObjects.append(btn)
+
+    @final
+    def drawTextBlock(self, textblock: TextBlock):
+        size = textblock.getSize()
+        b = textblock.getBorderThickness()
+        pos = textblock.getPos()
+        font = textblock.getFont()
+        self.drawRect(textblock.getBorderColor(), pos, (size[0] + (b * 2), size[1] + (b * 2)))
+        self.drawRect(textblock.getBackgroundColor(), (pos[0] + b, pos[1] + b), size)
+        if not font is None:
+            self.drawTextByFont((pos[0] + (size[0] / 2), pos[1] + (size[1] / 2)), textblock.getText(), font, textblock.getTextColor(), positioning=Positioning.CENTER)
 
     def tick(self):
         for obj in self.__tickObjects:

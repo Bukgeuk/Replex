@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 from enum import Enum
 from typing import Tuple, final, Union, Callable, Dict, List
 import pygame
-from ..api.app import getCurrentFramerate
+from ..utils.app import getCurrentFramerate
 
 Pos = Tuple[float, float]
 Color = Union[Tuple[int, int, int], Tuple[int, int, int, int]]
@@ -29,38 +29,38 @@ class Positioning(Enum):
     BOTTOMRIGHT = 4
 
 class DisplayObject:
-    def __init__(self, pos: Pos) -> None:
+    def __init__(self, pos: Pos, size: Pos) -> None:
         self.__pos: Pos = pos
+        self.__size: Pos = size
 
     @final
     def setPos(self, pos: Pos) -> DisplayObject:
         self.__pos = pos
         return self
-
+    
     @final
     def getPos(self) -> Pos:
         return self.__pos
-
-    def doEventSpread(self, pos: Pos) -> bool:
-        return False
-
-class InteractiveDisplayObject(DisplayObject):
-    def __init__(self, pos: Pos, size: Pos) -> None:
-        super().__init__(pos)
-        self.__size: Pos = size
-        self.__isMouseEntered: bool = False
-        self.__eventHandlers: Dict[EventType, List[Callable[[any]]]] = {}
-        for type in EventType:
-            self.__eventHandlers[type] = []
-
-    @final
-    def getSize(self) -> Pos:
-        return self.__size
 
     @final
     def setSize(self, size: Pos) -> InteractiveDisplayObject:
         self.__size = size
         return self
+    
+    @final
+    def getSize(self) -> Pos:
+        return self.__size
+    
+    def doEventSpread(self, pos: Pos) -> bool:
+        return False
+
+class InteractiveDisplayObject(DisplayObject):
+    def __init__(self, pos: Pos, size: Pos) -> None:
+        super().__init__(pos, size)
+        self.__isMouseEntered: bool = False
+        self.__eventHandlers: Dict[EventType, List[Callable[[any]]]] = {}
+        for type in EventType:
+            self.__eventHandlers[type] = []
     
     @final
     def isMouseEntered(self) -> bool:
