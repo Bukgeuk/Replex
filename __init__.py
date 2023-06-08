@@ -11,15 +11,10 @@ from .api import key
 from .api import mouse
 from .api import app
 from .components.Audio import Audio
-from .components.Base import Positioning, Pos
+from .components.Base import Positioning, Pos, EventType
 from .components.Image import Image, DynamicImage
 from .components.Scene import Scene
 from .components.Button import Button
-
-
-class EventType(Enum):
-    RUN = 0
-    QUIT = 1
 
 class DisplayMode(Enum):
     WINDOWED = 0
