@@ -14,4 +14,8 @@ def getCurrentFramerate() -> Optional[float]:
         return None
 
 def getMonitorInfo() -> List[Tuple[int, int]]:
+    '''
+    Return:
+        List of (width, height)
+    '''
     return [(m.width, m.height) for m in screeninfo.get_monitors()]
