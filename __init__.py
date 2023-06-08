@@ -13,7 +13,8 @@ from .api import app
 from .components.Audio import Audio
 from .components.Base import Positioning, Pos
 from .components.Image import Image, DynamicImage
-from .components.Screen import Screen
+from .components.Scene import Scene
+from .components.Button import Button
 
 
 class EventType(Enum):
@@ -34,7 +35,7 @@ class App:
         self.__clock = pygame.time.Clock()
         self.__framerate: int = 0
         self.__eventListeners: Dict[EventType, List[Callable[[App], None]]] = {}
-        self.__screen: Optional[Screen]
+        self.__scene: Optional[Scene]
         self.__pygameSurface: Optional[pygame.surface.Surface] = None
 
     def __occurEvent(self, event: EventType) -> None:
@@ -42,11 +43,11 @@ class App:
             for callback in self.__eventListeners[event]:
                 callback(self)
     
-    def run(self, initialScreen: Screen) -> None:
-        self.__screen = initialScreen
+    def run(self, initialScene: Scene) -> None:
+        self.__scene = initialScene
 
         self.__occurEvent(EventType.RUN)
-        self.__screen.onEnterScreen()
+        self.__scene.onEnterScene()
 
         while not self.__terminate:
             app.renewFramerate(self.__framerate)
@@ -54,31 +55,31 @@ class App:
             # Event handling
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.__screen.onEscapeScreen()
+                    self.__scene.onEscapeScene()
                     self.__occurEvent(EventType.QUIT)
                     self.terminate()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if not (event.button == 4 or event.button == 5):
-                        self.__screen.onMouseDown(event)
+                        self.__scene.onMouseDown(event)
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if not (event.button == 4 or event.button == 5):
-                        self.__screen.onMouseUp(event)
+                        self.__scene.onMouseUp(event)
                 elif event.type == pygame.MOUSEWHEEL:
-                    self.__screen.onMouseWheel(event)
+                    self.__scene.onMouseWheel(event)
                 elif event.type == pygame.MOUSEMOTION:
-                    self.__screen.onMouseMove(event)
+                    self.__scene.onMouseMove(event)
                 elif event.type == pygame.KEYDOWN:
-                    self.__screen.onKeyDown(event)
+                    self.__scene.onKeyDown(event)
                 elif event.type == pygame.KEYUP:
-                    self.__screen.onKeyUp(event)
+                    self.__scene.onKeyUp(event)
 
             # Drawing
-            self.__screen.tick()
-            self.__screen.draw()
+            self.__scene.tick()
+            self.__scene.draw()
 
             assert self.__pygameSurface is not None, 'Use setWindowMode before running'
 
-            self.__pygameSurface.blit(self.__screen.getPygameSurface(), (0, 0))
+            self.__pygameSurface.blit(self.__scene.getPygameSurface(), (0, 0))
             pygame.display.update()         
             
             # Framerate
@@ -119,11 +120,11 @@ class App:
     def getCurrentFramerate(self) -> float:
         return self.__framerate
 
-    def setScreen(self, screen: Screen) -> None:
-        if self.__screen is not None:
-            self.__screen.onEscapeScreen()
-        self.__screen = screen
-        self.__screen.onEnterScreen()
+    def setScene(self, scene: Scene) -> None:
+        if self.__scene is not None:
+            self.__scene.onEscapeScene()
+        self.__scene = scene
+        self.__scene.onEnterScene()
 
     
     def terminate(self) -> None:

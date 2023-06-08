@@ -4,14 +4,14 @@ from .Surface import Surface
 from .Base import Pos
 
 
-class Screen(Surface, metaclass=ABCMeta):
+class Scene(Surface, metaclass=ABCMeta):
     def __init__(self, size: Pos) -> None:
         super().__init__((0, 0), size)
 
-    def onEnterScreen(self) -> None:
+    def onEnterScene(self) -> None:
         pass
 
-    def onEscapeScreen(self) -> None:
+    def onEscapeScene(self) -> None:
         pass
 
     @abstractmethod

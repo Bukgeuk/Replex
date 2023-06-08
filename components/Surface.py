@@ -1,13 +1,13 @@
 from __future__ import annotations
-from typing import List, Optional, Tuple, Union, final
+from typing import List, Optional, final
 
 import pygame
 
 from ..api.font import getFont
-from .Base import InteractiveDisplayObject, Positioning, DynamicObject, Pos
+from .Base import InteractiveDisplayObject, Positioning, DynamicObject, Pos, Color
 from .Image import Image
+from .Button import Button
 
-ColorType = Union[Tuple[int, int, int], Tuple[int, int, int, int]]
 
 class Surface(InteractiveDisplayObject):
     def __init__(self, pos: Pos, size: Pos) -> None:
@@ -21,11 +21,11 @@ class Surface(InteractiveDisplayObject):
         return self.__surface
 
     @final
-    def fill(self, color: ColorType) -> None:
+    def fill(self, color: Color) -> None:
         self.__surface.fill(color)
 
     @final
-    def drawTextByFont(self, pos: Pos, text: str, font: pygame.font.Font, color: ColorType, antialias: bool = True, positioning: Positioning = Positioning.TOPLEFT) -> None:
+    def drawTextByFont(self, pos: Pos, text: str, font: pygame.font.Font, color: Color, antialias: bool = True, positioning: Positioning = Positioning.TOPLEFT) -> None:
         image = font.render(text, antialias, color)
         rect = image.get_rect()
         v = (round(pos[0]), round(pos[1]))
@@ -44,7 +44,7 @@ class Surface(InteractiveDisplayObject):
         self.__surface.blit(image, rect)
 
     @final
-    def drawTextByFontName(self, pos: Pos, text: str, fontName: str, color: ColorType, antialias: bool = True, positioning: Positioning = Positioning.TOPLEFT) -> None:
+    def drawTextByFontName(self, pos: Pos, text: str, fontName: str, color: Color, antialias: bool = True, positioning: Positioning = Positioning.TOPLEFT) -> None:
         font = getFont(fontName)
         if font is not None:
             self.drawTextByFont(pos, text, font, color, antialias, positioning)
@@ -54,7 +54,7 @@ class Surface(InteractiveDisplayObject):
         self.__surface.blit(image.getPygameImage(), image.getPos())
 
     @final
-    def drawRect(self, color: ColorType, pos: Pos, size: Pos, thickness: int = 0, radius: int = -1, top_left_radius: int = -1, top_right_radius: int = -1, bottom_left_radius: int = -1, bottom_right_radius: int = -1) -> None:
+    def drawRect(self, color: Color, pos: Pos, size: Pos, thickness: int = 0, radius: int = -1, top_left_radius: int = -1, top_right_radius: int = -1, bottom_left_radius: int = -1, bottom_right_radius: int = -1) -> None:
         '''
         if thickness is 0, it will draw filled rectangle.\n
         if top_left_radius, top_right_radius, bottom_left_radius, bottom_right_radius < 0, it will use radius value.\n
@@ -63,7 +63,7 @@ class Surface(InteractiveDisplayObject):
         pygame.draw.rect(self.__surface, color, ((pos[0], pos[1]), (size[0], size[1])), thickness)
 
     @final
-    def drawCircle(self, color: ColorType, pos: Pos, radius: int, thickness: int = 0, draw_top_right: Optional[bool] = None, draw_top_left: Optional[bool] = None, draw_bottom_left: Optional[bool] = None, draw_bottom_right: Optional[bool] = None) -> None:
+    def drawCircle(self, color: Color, pos: Pos, radius: int, thickness: int = 0, draw_top_right: Optional[bool] = None, draw_top_left: Optional[bool] = None, draw_bottom_left: Optional[bool] = None, draw_bottom_right: Optional[bool] = None) -> None:
         '''
         if thickness is 0, it will draw filled circle.\n
         nothing will be drawn if the radius is less than 1
@@ -71,21 +71,21 @@ class Surface(InteractiveDisplayObject):
         pygame.draw.circle(self.__surface, color, pos, radius, thickness, draw_top_right, draw_top_left, draw_bottom_right, draw_bottom_left)
     
     @final
-    def drawEllipse(self, color: ColorType, pos: Pos, size: Pos, thickness: int = 0) -> None:
+    def drawEllipse(self, color: Color, pos: Pos, size: Pos, thickness: int = 0) -> None:
         '''
         if thickness is 0, it will draw filled ellipse.
         '''
         pygame.draw.ellipse(self.__surface, color, ((pos[0], pos[1]), (size[0], size[1])), thickness)
 
     @final
-    def drawLine(self, color: ColorType, start_pos: Pos, end_pos: Pos, thickness: int = 1) -> None:
+    def drawLine(self, color: Color, start_pos: Pos, end_pos: Pos, thickness: int = 1) -> None:
         '''
         if thickness < 1, nothing will be drawn.
         '''
         pygame.draw.line(self.__surface, color, start_pos, end_pos, thickness)
 
     @final
-    def drawLines(self, color: ColorType, points: List[Pos], closed: bool = False, thickness: int = 1) -> None:
+    def drawLines(self, color: Color, points: List[Pos], closed: bool = False, thickness: int = 1) -> None:
         '''
         if thickness < 1, nothing will be drawn.\n
         if closed is True, an additional line segment is drawn between the first and last points in the points sequence.
@@ -93,11 +93,11 @@ class Surface(InteractiveDisplayObject):
         pygame.draw.lines(self.__surface, color, closed, points, thickness)
 
     @final
-    def drawAntialiasedLine(self, color: ColorType, start_pos: Pos, end_pos: Pos, blend: int = 1) -> None:
+    def drawAntialiasedLine(self, color: Color, start_pos: Pos, end_pos: Pos, blend: int = 1) -> None:
         pygame.draw.aaline(self.__surface, color, start_pos, end_pos, blend)
 
     @final
-    def drawAntialiasedLines(self, color: ColorType, points: List[Pos], closed: bool = False, blend: int = 1) -> None:
+    def drawAntialiasedLines(self, color: Color, points: List[Pos], closed: bool = False, blend: int = 1) -> None:
         '''
         if closed is True, an additional line segment is drawn between the first and last points in the points sequence.
         '''
@@ -114,6 +114,19 @@ class Surface(InteractiveDisplayObject):
         surface = obj.getPygameSurface()
         self.__surface.blit(surface, obj.getPos())
         self.__tickObjects.append(obj)
+
+    @final
+    def drawButton(self, btn: Button):
+        size = btn.getSize()
+        b = btn.getBorderThickness()
+        pos = btn.getPos()
+        font = btn.getFont()
+        self.drawRect(btn.getBorderColor(), pos, (size[0] + (b * 2), size[1] + (b * 2)))
+        self.drawRect(btn.getBtnColor(), (pos[0] + b, pos[1] + b), size)
+        if not font is None:
+            self.drawTextByFont((pos[0] + (size[0] / 2), pos[1] + (size[1] / 2)), btn.getText(), font, btn.getTextColor(), positioning=Positioning.CENTER)
+
+        self.__eventObjects.append(btn)
 
     def tick(self):
         for obj in self.__tickObjects:
