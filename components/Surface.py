@@ -161,6 +161,16 @@ class Surface(InteractiveDisplayObject):
         for obj in self.__eventObjects:
             if obj.doEventSpread(event.pos):
                 obj.onMouseMove(event)
+                if not obj.isMouseEntered():
+                    obj.onMouseEnter(event)
+            elif obj.isMouseEntered():
+                obj.onMouseLeave(event)
+
+    def onMouseEnter(self, event) -> None:
+        super().onMouseEnter(event)
+
+    def onMouseLeave(self, event) -> None:
+        super().onMouseLeave(event)
 
     def onKeyDown(self, event) -> None:
         super().onKeyDown(event)

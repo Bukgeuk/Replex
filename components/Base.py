@@ -36,6 +36,7 @@ class InteractiveDisplayObject(DisplayObject):
     def __init__(self, pos: Pos, size: Pos) -> None:
         super().__init__(pos)
         self.__size: Pos = size
+        self.__isMouseEntered: bool = False
 
     @final
     def getSize(self) -> Pos:
@@ -45,6 +46,10 @@ class InteractiveDisplayObject(DisplayObject):
     def setSize(self, size: Pos) -> InteractiveDisplayObject:
         self.__size = size
         return self
+    
+    @final
+    def isMouseEntered(self) -> bool:
+        return self.__isMouseEntered
 
     def doEventSpread(self, pos: Pos) -> bool:
         cpos = self.getPos()
@@ -61,6 +66,18 @@ class InteractiveDisplayObject(DisplayObject):
 
     def onMouseMove(self, event) -> None:
         pass
+    
+    def onMouseEnter(self, event) -> None:
+        '''
+        * This event doesn't work on Scene
+        '''
+        self.__isMouseEntered = True
+
+    def onMouseLeave(self, event) -> None:
+        '''
+        * This event doesn't work on Scene
+        '''
+        self.__isMouseEntered = False
 
     def onKeyDown(self, event) -> None:
         pass
