@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
 from enum import Enum
-from typing import Tuple, final
+from typing import Tuple, final, Union
 import pygame
 from ..api.app import getCurrentFramerate
 
 Pos = Tuple[float, float]
+Color = Union[Tuple[int, int, int], Tuple[int, int, int, int]]
 
 class Positioning(Enum):
     CENTER = 0
@@ -46,7 +47,8 @@ class InteractiveDisplayObject(DisplayObject):
         return self
 
     def doEventSpread(self, pos: Pos) -> bool:
-        return (self.__pos[0] < pos[0] < self.__pos[0] + self.__size[0]) and (self.__pos[1] < pos[1] < self.__pos[1] + self.__size[1])
+        cpos = self.getPos()
+        return (cpos[0] < pos[0] < cpos[0] + self.__size[0]) and (cpos[1] < pos[1] < cpos[1] + self.__size[1])
 
     def onMouseDown(self, event) -> None:
         pass
