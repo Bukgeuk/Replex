@@ -5,14 +5,15 @@ from .Base import InteractiveDisplayObject, Pos, Color
 from ..utils.font import getFont
 
 class Button(InteractiveDisplayObject):
-    def __init__(self, pos: Pos, size: Pos, text: str = '', fontName: str = '', font: Optional[pygame.font.Font] = None, textColor: Color = (0, 0, 0), btnColor: Color = (255, 255, 255), borderColor: Color = (0, 0, 0), borderThickness: int = 1, hoverColor: Optional[Color] = None) -> None:
+    def __init__(self, pos: Pos, size: Pos, text: str = '', fontName: str = '', font: Optional[pygame.font.Font] = None, textColor: Color = (0, 0, 0), backgroundColor: Color = (255, 255, 255), borderColor: Color = (0, 0, 0), borderThickness: int = 1, backgroundHoverColor: Optional[Color] = None, textHoverColor: Optional[Color] = None) -> None:
         super().__init__(pos, size)
         self.__text = text
         self.__textColor = textColor
-        self.__btnColor = btnColor
+        self.__backgroundColor = backgroundColor
         self.__borderColor = borderColor
         self.__borderThickness = borderThickness
-        self.__hoverColor = hoverColor
+        self.__backgroundHoverColor = backgroundHoverColor
+        self.__textHoverColor = textHoverColor
 
         if not font is None:
             self.__font = font
@@ -29,18 +30,49 @@ class Button(InteractiveDisplayObject):
     def setTextColor(self, color: Color) -> Button:
         self.__textColor = color
         return self
-
+    
     def getTextColor(self) -> Color:
         return self.__textColor
+    
+    def setTextHoverColor(self, color: Optional[Color]) -> Button:
+        self.__textHoverColor = color
+        return self
+    
+    def getTextHoverColor(self) -> Optional[Color]:
+        return self.__textHoverColor
 
-    def getBtnColor(self) -> Color:
-        if self.isMouseEntered() and self.__hoverColor != None:
-            return self.__hoverColor
+    def getTextRenderColor(self) -> Color:
+        '''
+        Return:
+            The actual rendering text color based on hover state
+        '''
+        if self.isMouseEntered() and self.__textHoverColor != None:
+            return self.__textHoverColor
         else:
-            return self.__btnColor
+            return self.__textColor
 
-    def setBtnColor(self, color: Color) -> Button:
-        self.__btnColor = color
+    def getBackgroundRenderColor(self) -> Color:
+        '''
+        Return:
+            The actual rendering background color based on hover state
+        '''
+        if self.isMouseEntered() and self.__backgroundHoverColor != None:
+            return self.__backgroundHoverColor
+        else:
+            return self.__backgroundColor
+
+    def setBackgroundColor(self, color: Color) -> Button:
+        self.__backgroundColor = color
+        return self
+    
+    def getBackgroundColor(self) -> Color:
+        return self.__backgroundColor
+    
+    def getBackgroundHoverColor(self) -> Optional[Color]:
+        return self.__backgroundHoverColor
+    
+    def setBackgroundHoverColor(self, color: Optional[Color]) -> Button:
+        self.__backgroundHoverColor = color
         return self
 
     def setBorderColor(self, color: Color) -> Button:
