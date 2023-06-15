@@ -1,40 +1,18 @@
 from __future__ import annotations
 
-from abc import ABCMeta, abstractmethod
-from enum import Enum
-from typing import Tuple, final, Union, Callable, Dict, List
-import pygame
-from ..utils.app import getCurrentFramerate
+from typing import final, Callable, Dict, List
+from ..utils.event import EventType
+from ..utils.position import Pos
 
-Pos = Tuple[float, float]
-Color = Union[Tuple[int, int, int], Tuple[int, int, int, int]]
+__all__ = ['Component', 'InteractiveComponent']
 
-class EventType(Enum):
-    RUN = 0
-    QUIT = 1
-    onMouseDown = 2
-    onMouseUp = 3
-    onMouseWheel = 4
-    onMouseMove = 5
-    onMouseEnter = 6
-    onMouseLeave = 7
-    onKeyDown = 8
-    onKeyUp = 9
-
-class Positioning(Enum):
-    CENTER = 0
-    TOPLEFT = 1
-    TOPRIGHT = 2
-    BOTTOMLEFT = 3
-    BOTTOMRIGHT = 4
-
-class DisplayObject:
+class Component:
     def __init__(self, pos: Pos, size: Pos) -> None:
         self.__pos: Pos = pos
         self.__size: Pos = size
 
     @final
-    def setPos(self, pos: Pos) -> DisplayObject:
+    def setPos(self, pos: Pos) -> Component:
         self.__pos = pos
         return self
     
@@ -43,7 +21,7 @@ class DisplayObject:
         return self.__pos
 
     @final
-    def setSize(self, size: Pos) -> InteractiveDisplayObject:
+    def setSize(self, size: Pos) -> Component:
         self.__size = size
         return self
     
@@ -54,41 +32,52 @@ class DisplayObject:
     def doEventSpread(self, pos: Pos) -> bool:
         return False
 
-class InteractiveDisplayObject(DisplayObject):
+class InteractiveComponent(Component):
     def __init__(self, pos: Pos, size: Pos) -> None:
         super().__init__(pos, size)
         self.__isMouseEntered: bool = False
-        self.__eventHandlers: Dict[EventType, List[Callable[[any]]]] = {}
+        self.__eventListeners: Dict[EventType, List[Callable[[any]]]] = {}
         for type in EventType:
-            self.__eventHandlers[type] = []
+            self.__eventListeners[type] = []
     
     @final
     def isMouseEntered(self) -> bool:
         return self.__isMouseEntered
     
     @final
-    def addEventHandler(self, eventType: EventType, callback: Callable[[any]]) -> InteractiveDisplayObject:
-        self.__eventHandlers[eventType].append(callback)
+    def addEventListener(self, eventType: EventType, callback: Callable[[any]]) -> InteractiveComponent:
+        self.__eventListeners[eventType].append(callback)
+        return self
+    
+    @final
+    def removeEventListener(self, eventType: EventType, callback: Callable[[any]]) -> InteractiveComponent:
+        self.__eventListeners[eventType].remove(callback)
+        return self
+
+    @final
+    def clearEventListeners(self, eventType: EventType) -> InteractiveComponent:
+        self.__eventListeners[eventType].clear()
         return self
 
     def doEventSpread(self, pos: Pos) -> bool:
         cpos = self.getPos()
-        return (cpos[0] < pos[0] < cpos[0] + self.__size[0]) and (cpos[1] < pos[1] < cpos[1] + self.__size[1])
+        size = self.getSize()
+        return (cpos[0] < pos[0] < cpos[0] + size[0]) and (cpos[1] < pos[1] < cpos[1] + size[1])
 
     def onMouseDown(self, event) -> None:
-        for callback in self.__eventHandlers[EventType.onMouseDown]:
+        for callback in self.__eventListeners[EventType.onMouseDown]:
             callback(event)
 
     def onMouseUp(self, event) -> None:
-        for callback in self.__eventHandlers[EventType.onMouseUp]:
+        for callback in self.__eventListeners[EventType.onMouseUp]:
             callback(event)
 
     def onMouseWheel(self, event) -> None:
-        for callback in self.__eventHandlers[EventType.onMouseWheel]:
+        for callback in self.__eventListeners[EventType.onMouseWheel]:
             callback(event)
 
     def onMouseMove(self, event) -> None:
-        for callback in self.__eventHandlers[EventType.onMouseMove]:
+        for callback in self.__eventListeners[EventType.onMouseMove]:
             callback(event)
     
     def onMouseEnter(self, event) -> None:
@@ -97,7 +86,7 @@ class InteractiveDisplayObject(DisplayObject):
         '''
         self.__isMouseEntered = True
 
-        for callback in self.__eventHandlers[EventType.onMouseEnter]:
+        for callback in self.__eventListeners[EventType.onMouseEnter]:
             callback(event)
 
     def onMouseLeave(self, event) -> None:
@@ -106,24 +95,18 @@ class InteractiveDisplayObject(DisplayObject):
         '''
         self.__isMouseEntered = False
 
-        for callback in self.__eventHandlers[EventType.onMouseLeave]:
+        for callback in self.__eventListeners[EventType.onMouseLeave]:
             callback(event)
 
     def onKeyDown(self, event) -> None:
-        for callback in self.__eventHandlers[EventType.onKeyDown]:
+        for callback in self.__eventListeners[EventType.onKeyDown]:
             callback(event)
 
     def onKeyUp(self, event) -> None:
-        for callback in self.__eventHandlers[EventType.onKeyUp]:
+        for callback in self.__eventListeners[EventType.onKeyUp]:
             callback(event)
-
-'''class DynamicBase(metaclass=ABCMeta):
-    def __init__(self) -> None:
-        self.__velocity: Pos = (0, 0)
-
-    @abstractmethod'''
     
-class DynamicObject(DisplayObject, metaclass=ABCMeta):
+'''class DynamicObject(DisplayObject, metaclass=ABCMeta):
     def __init__(self, pos: Pos) -> None:
         super().__init__(pos)
         self.__velocity: Pos = (0, 0)
@@ -150,4 +133,4 @@ class DynamicObject(DisplayObject, metaclass=ABCMeta):
     @final
     def addVelocity(self, velocity: Pos) -> DynamicObject:
         self.__velocity = (self.__velocity[0] + velocity[0], self.__velocity[1] + velocity[1])
-        return self
+        return self'''

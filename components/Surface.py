@@ -4,17 +4,23 @@ from typing import List, Optional, final
 import pygame
 
 from ..utils.font import getFont
-from .Base import InteractiveDisplayObject, Positioning, DynamicObject, Pos, Color
+from .Base import InteractiveComponent, Pos
+from ..utils.position import Position
+from ..utils.font import Font
+from ..utils.color import Color
 from .Image import Image
 from .Button import Button
+from .TextBox import TextBox
+from .TextInput import TextInput
 
+__all__ = ['Surface']
 
-class Surface(InteractiveDisplayObject):
+class Surface(InteractiveComponent):
     def __init__(self, pos: Pos, size: Pos) -> None:
         super().__init__(pos, size)
         self.__surface = pygame.Surface(size)
-        self.__tickObjects: List[Surface | DynamicObject] = []
-        self.__eventObjects: List[InteractiveDisplayObject] = []
+        self.__tickObjects: List[Surface] = []
+        self.__eventObjects: List[InteractiveComponent] = []
 
     @final
     def getPygameSurface(self):
@@ -25,29 +31,29 @@ class Surface(InteractiveDisplayObject):
         self.__surface.fill(color)
 
     @final
-    def drawTextByFont(self, pos: Pos, text: str, font: pygame.font.Font, color: Color, antialias: bool = True, positioning: Positioning = Positioning.TOPLEFT) -> None:
-        image = font.render(text, antialias, color)
+    def drawTextByFont(self, pos: Pos, text: str, font: Font, color: Color, antialias: bool = True, position: Position = Position.TOPLEFT) -> None:
+        image = font.render(text, antialias, color.rgba)
         rect = image.get_rect()
         v = (round(pos[0]), round(pos[1]))
 
-        if positioning == Positioning.CENTER:
+        if position == Position.CENTER:
             rect.center = v
-        elif positioning == Positioning.TOPLEFT:
+        elif position == Position.TOPLEFT:
             rect.topleft = v
-        elif positioning == Positioning.TOPRIGHT:
+        elif position == Position.TOPRIGHT:
             rect.topright = v
-        elif positioning == Positioning.BOTTOMLEFT:
+        elif position == Position.BOTTOMLEFT:
             rect.bottomleft = v
-        elif positioning == Positioning.BOTTOMRIGHT:
+        elif position == Position.BOTTOMRIGHT:
             rect.bottomright = v
 
         self.__surface.blit(image, rect)
 
     @final
-    def drawTextByFontName(self, pos: Pos, text: str, fontName: str, color: Color, antialias: bool = True, positioning: Positioning = Positioning.TOPLEFT) -> None:
+    def drawTextByFontName(self, pos: Pos, text: str, fontName: str, color: Color, antialias: bool = True, position: Position = Position.TOPLEFT) -> None:
         font = getFont(fontName)
         if font is not None:
-            self.drawTextByFont(pos, text, font, color, antialias, positioning)
+            self.drawTextByFont(pos, text, font, color, antialias, position)
 
     @final
     def drawImage(self, image: Image):
@@ -60,7 +66,7 @@ class Surface(InteractiveDisplayObject):
         if top_left_radius, top_right_radius, bottom_left_radius, bottom_right_radius < 0, it will use radius value.\n
         if radius < 1, it will draw rectangle without rounded corners.
         '''
-        pygame.draw.rect(self.__surface, color, ((pos[0], pos[1]), (size[0], size[1])), thickness)
+        pygame.draw.rect(self.__surface, color.rgba, ((pos[0], pos[1]), (size[0], size[1])), thickness)
 
     @final
     def drawCircle(self, color: Color, pos: Pos, radius: int, thickness: int = 0, draw_top_right: Optional[bool] = None, draw_top_left: Optional[bool] = None, draw_bottom_left: Optional[bool] = None, draw_bottom_right: Optional[bool] = None) -> None:
@@ -68,21 +74,21 @@ class Surface(InteractiveDisplayObject):
         if thickness is 0, it will draw filled circle.\n
         nothing will be drawn if the radius is less than 1
         '''
-        pygame.draw.circle(self.__surface, color, pos, radius, thickness, draw_top_right, draw_top_left, draw_bottom_right, draw_bottom_left)
+        pygame.draw.circle(self.__surface, color.rgba, pos, radius, thickness, draw_top_right, draw_top_left, draw_bottom_right, draw_bottom_left)
     
     @final
     def drawEllipse(self, color: Color, pos: Pos, size: Pos, thickness: int = 0) -> None:
         '''
         if thickness is 0, it will draw filled ellipse.
         '''
-        pygame.draw.ellipse(self.__surface, color, ((pos[0], pos[1]), (size[0], size[1])), thickness)
+        pygame.draw.ellipse(self.__surface, color.rgba, ((pos[0], pos[1]), (size[0], size[1])), thickness)
 
     @final
     def drawLine(self, color: Color, start_pos: Pos, end_pos: Pos, thickness: int = 1) -> None:
         '''
         if thickness < 1, nothing will be drawn.
         '''
-        pygame.draw.line(self.__surface, color, start_pos, end_pos, thickness)
+        pygame.draw.line(self.__surface, color.rgba, start_pos, end_pos, thickness)
 
     @final
     def drawLines(self, color: Color, points: List[Pos], closed: bool = False, thickness: int = 1) -> None:
@@ -90,18 +96,18 @@ class Surface(InteractiveDisplayObject):
         if thickness < 1, nothing will be drawn.\n
         if closed is True, an additional line segment is drawn between the first and last points in the points sequence.
         '''
-        pygame.draw.lines(self.__surface, color, closed, points, thickness)
+        pygame.draw.lines(self.__surface, color.rgba, closed, points, thickness)
 
     @final
     def drawAntialiasedLine(self, color: Color, start_pos: Pos, end_pos: Pos, blend: int = 1) -> None:
-        pygame.draw.aaline(self.__surface, color, start_pos, end_pos, blend)
+        pygame.draw.aaline(self.__surface, color.rgba, start_pos, end_pos, blend)
 
     @final
     def drawAntialiasedLines(self, color: Color, points: List[Pos], closed: bool = False, blend: int = 1) -> None:
         '''
         if closed is True, an additional line segment is drawn between the first and last points in the points sequence.
         '''
-        pygame.draw.aalines(self.__surface, color, closed, points, blend)
+        pygame.draw.aalines(self.__surface, color.rgba, closed, points, blend)
 
     @final
     def drawSurface(self, surface: Surface, pos: Pos):
@@ -109,24 +115,41 @@ class Surface(InteractiveDisplayObject):
         self.__tickObjects.append(surface)
         self.__eventObjects.append(surface)
 
-    @final
+    '''@final
     def drawDynamicObject(self, obj: DynamicObject):
         surface = obj.getPygameSurface()
         self.__surface.blit(surface, obj.getPos())
-        self.__tickObjects.append(obj)
+        self.__tickObjects.append(obj)'''
 
     @final
-    def drawButton(self, btn: Button):
-        size = btn.getSize()
-        b = btn.getBorderThickness()
-        pos = btn.getPos()
-        font = btn.getFont()
-        self.drawRect(btn.getBorderColor(), pos, (size[0] + (b * 2), size[1] + (b * 2)))
-        self.drawRect(btn.getBackgroundRenderColor(), (pos[0] + b, pos[1] + b), size)
+    def drawTextBox(self, textBox: TextBox):
+        size = textBox.getSize()
+        b = textBox.getBorderThickness()
+        pos = textBox.getPos()
+        font = textBox.getFont()
+        self.drawRect(textBox.getBorderColor(), pos, (size[0] + (b * 2), size[1] + (b * 2)))
+        self.drawRect(textBox.getBackgroundColor(), (pos[0] + b, pos[1] + b), size)
         if not font is None:
-            self.drawTextByFont((pos[0] + (size[0] / 2), pos[1] + (size[1] / 2)), btn.getText(), font, btn.getTextRenderColor(), positioning=Positioning.CENTER)
+            self.drawTextByFont((pos[0] + (size[0] / 2), pos[1] + (size[1] / 2)), textBox.getText(), font, textBox.getTextColor(), position=Position.CENTER)
 
-        self.__eventObjects.append(btn)
+        self.__eventObjects.append(textBox)
+
+    @final
+    def drawButton(self, button: Button):
+        size = button.getSize()
+        b = button.getBorderThickness()
+        pos = button.getPos()
+        font = button.getFont()
+        self.drawRect(button.getBorderColor(), pos, (size[0] + (b * 2), size[1] + (b * 2)))
+        self.drawRect(button.getBackgroundRenderColor(), (pos[0] + b, pos[1] + b), size)
+        if not font is None:
+            self.drawTextByFont((pos[0] + (size[0] / 2), pos[1] + (size[1] / 2)), button.getText(), font, button.getTextRenderColor(), position=Position.CENTER)
+
+        self.__eventObjects.append(button)
+
+    @final
+    def drawTextInput(self, textInput: TextInput):
+        self.drawTextBox(textInput)
 
     def tick(self):
         for obj in self.__tickObjects:

@@ -1,5 +1,7 @@
 import pygame
 
+__all__ = ['getMousePressed', 'getMousePos', 'setMousePos', 'setMouseVisible', 'getMouseVisible', 'getMouseFocused']
+
 def getMousePressed():
     '''Please use this in MouseDown, MouseUp or MouseMove event'''
     return pygame.mouse.get_pressed()

@@ -1,15 +1,18 @@
 from typing import Optional, Tuple, List
 from screeninfo import screeninfo
+from enum import Enum
 
-_currentFps: Optional[float] = None
+__currentFps: Optional[float] = None
+
+__all__ = ['renewFramerate', 'getCurrentFramerate', 'getMonitorInfo', 'DisplayMode']
 
 def renewFramerate(value: float) -> None:
-    global _currentFps
-    _currentFps = value
+    global __currentFps
+    __currentFps = value
 
 def getCurrentFramerate() -> Optional[float]:
-    if not _currentFps is None:
-        return _currentFps
+    if not __currentFps is None:
+        return __currentFps
     else:
         return None
 
@@ -19,3 +22,9 @@ def getMonitorInfo() -> List[Tuple[int, int]]:
         List of (width, height)
     '''
     return [(m.width, m.height) for m in screeninfo.get_monitors()]
+
+class DisplayMode(Enum):
+    WINDOWED = 0
+    FULLSCREEN = 1
+    NOFRAME = 2
+    HIDDEN = 3

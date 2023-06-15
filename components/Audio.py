@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pygame
 
+__all__ = ['Audio']
 
 class Audio:
     def __init__(self, path: str) -> None:

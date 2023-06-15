@@ -1,5 +1,6 @@
 import pygame
 
+__all__ = ['getKeyFocused', 'getKeyState', 'getModifierKeyState', 'isModifierKeyStateContain', 'getKeyCodeByString']
 
 def getKeyFocused():
     return pygame.key.get_focused()
