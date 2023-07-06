@@ -6,7 +6,7 @@ from typing import Callable, Dict, List, Optional
 import pygame
 from ..components.Scene import Scene
 from ..utils.event import EventType
-from ..utils.app import renewFramerate, DisplayMode
+from ..utils.app import renewFramerate, DisplayMode, renewWindowSize
 from ..utils.language import Language
 
 __all__ = ['App']
@@ -101,6 +101,7 @@ class App:
             vs = 1
 
         self.__pygameSurface = pygame.display.set_mode((width, height), flags, vsync=vs)
+        renewWindowSize((width, height))
 
     def toggleFullscreen(self) -> None:
         pygame.display.toggle_fullscreen()

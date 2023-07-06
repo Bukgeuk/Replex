@@ -30,6 +30,32 @@ class Component:
     @size.setter
     def size(self, size: Pos):
         self.__size = size
+
+    @final
+    def vw(self, radio: float) -> int:
+        '''
+        Parameter:
+            radio: Float value between 0.0 to 1.0
+        '''
+        if radio >= 1.0:
+            return int(self.size[0])
+        elif radio <= 0.0:
+            return 0
+        else:
+            return int(self.size[0] * radio)
+    
+    @final
+    def vh(self, radio: float) -> int:
+        '''
+        Parameter:
+            radio: Float value between 0.0 to 1.0
+        '''
+        if radio >= 1.0:
+            return int(self.size[1])
+        elif radio <= 0.0:
+            return 0
+        else:
+            return int(self.size[1] * radio)
     
     def doEventSpread(self, pos: Pos) -> bool:
         return False
