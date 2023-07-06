@@ -3,23 +3,40 @@ from typing import Optional
 from .Base import InteractiveComponent
 from ..utils.position import Pos
 from ..utils.font import Font, getFont
-from ..utils.color import Color, BLACK, WHITE
+from ..utils.color import Color, COLORS
+from ..utils.style import ComponentStyle
 
-__all__ = ['TextBox']
+__all__ = ['TextBox', 'TextBoxStyle']
+
+class TextBoxStyle(ComponentStyle):
+    font: Font | str
+    textColor: Color
+    backgroundColor: Color
+    borderColor: Color
+    borderThickness: int
+
+    def __init__(self, font: Font | str, textColor: Color = COLORS.BLACK, backgroundColor: Color = COLORS.WHITE, borderColor: Color = COLORS.BLACK, borderThickness: int = 1) -> None:
+        super().__init__()
+        self.font = font
+        self.textColor = textColor
+        self.backgroundColor = backgroundColor
+        self.borderColor = borderColor
+        self.borderThickness = borderThickness
 
 class TextBox(InteractiveComponent):
-    def __init__(self, pos: Pos, size: Pos, text: str = '', fontName: str = '', font: Optional[Font] = None, textColor: Color = BLACK, backgroundColor: Color = WHITE, borderColor: Color = BLACK, borderThickness: int = 1) -> None:
+    def __init__(self, pos: Pos, size: Pos, style: TextBoxStyle, text: str = '') -> None:
         super().__init__(pos, size)
         self.__text = text
-        self.__textColor = textColor
-        self.__backgroundColor = backgroundColor
-        self.__borderColor = borderColor
-        self.__borderThickness = borderThickness
+        self.__textColor = style.textColor
+        self.__backgroundColor = style.backgroundColor
+        self.__borderColor = style.borderColor
+        self.__borderThickness = style.borderThickness
+        self.__font: Font | None
 
-        if not font is None:
-            self.__font = font
-        else:
-            self.__font = getFont(fontName)
+        if type(style.font) is str:
+            self.__font = getFont(style.font)
+        elif type(style.font) is Font:
+            self.__font = style.font
 
     @property
     def text(self) -> str:
@@ -69,7 +86,7 @@ class TextBox(InteractiveComponent):
     def font(self, font: Font | str):
         if type(font) is str:
             self.__font = getFont(font)
-        else:
+        elif type(font) is Font:
             self.__font = font
 
     def tick(self) -> None:

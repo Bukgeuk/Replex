@@ -6,3 +6,4 @@ from .font import *
 from .event import *
 from .color import *
 from .position import *
+from .style import *

@@ -28,7 +28,7 @@ class Surface(InteractiveComponent):
 
     @final
     def fill(self, color: Color) -> None:
-        self.__surface.fill(color)
+        self.__surface.fill(color.rgba)
 
     @final
     def drawTextByFont(self, pos: Pos, text: str, font: Font, color: Color, antialias: bool = True, position: Position = Position.TOPLEFT) -> None:

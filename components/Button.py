@@ -1,17 +1,27 @@
 from __future__ import annotations
 from typing import Optional
-from .Base import Pos
-from .TextBox import TextBox
-from ..utils.color import Color, BLACK, WHITE
-from ..utils.font import Font
 
-__all__ = ['Button']
+from Replex.utils.color import Color, COLORS
+from Replex.utils.font import Font
+from .Base import Pos
+from .TextBox import TextBox, TextBoxStyle
+
+__all__ = ['Button', 'ButtonStyle']
+
+class ButtonStyle(TextBoxStyle):
+    backgroundHoverColor: Optional[Color] = None
+    textHoverColor: Optional[Color] = None
+
+    def __init__(self, font: Font | str, textColor: Color = COLORS.BLACK, backgroundColor: Color = COLORS.WHITE, borderColor: Color = COLORS.BLACK, borderThickness: int = 1, backgroundHoverColor: Optional[Color] = None, textHoverColor: Optional[Color] = None) -> None:
+        super().__init__(font, textColor, backgroundColor, borderColor, borderThickness)
+        self.backgroundHoverColor = backgroundHoverColor
+        self.textHoverColor = textHoverColor
 
 class Button(TextBox):
-    def __init__(self, pos: Pos, size: Pos, text: str = '', fontName: str = '', font: Optional[Font] = None, textColor: Color = BLACK, backgroundColor: Color = WHITE, borderColor: Color = BLACK, borderThickness: int = 1, backgroundHoverColor: Optional[Color] = None, textHoverColor: Optional[Color] = None) -> None:
-        super().__init__(pos, size, text, fontName, font, textColor, backgroundColor, borderColor, borderThickness)
-        self.__backgroundHoverColor = backgroundHoverColor
-        self.__textHoverColor = textHoverColor
+    def __init__(self, pos: Pos, size: Pos, style: ButtonStyle, text: str = '') -> None:
+        super().__init__(pos, size, style, text)
+        self.__backgroundHoverColor = style.backgroundHoverColor
+        self.__textHoverColor = style.textHoverColor
     
     @property
     def textHoverColor(self) -> Optional[Color]:

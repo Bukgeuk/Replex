@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Union, Tuple
 
-__all__ = ['ColorLike', 'Color', 'BLACK', 'WHITE']
+__all__ = ['ColorLike', 'Color', 'COLORS']
 
 ColorLike = Union[Tuple[int, int, int], Tuple[int, int, int, int], str]
 class Color:
@@ -45,7 +45,54 @@ class Color:
     def RGBToHEX(rgb: Tuple[int, int, int]) -> str:
         code = '%02x%02x%02x' % rgb
         return '#' + code
+
+class _COLORS:
+    @property
+    def BLACK(self):
+        return Color((0, 0, 0))
     
-BLACK = Color((0, 0, 0))
-WHITE = Color((255, 255, 255))
+    @property
+    def WHITE(self):
+        return Color((255, 255, 255))
     
+    @property
+    def RED(self):
+        return Color((255, 0, 0))
+    
+    @property
+    def ORANGE(self):
+        return Color((255, 128, 0))
+    
+    @property
+    def YELLOW(self):
+        return Color((255, 255, 0))
+    
+    @property
+    def GREEN(self):
+        return Color((0, 255, 0))
+    
+    @property
+    def SKYBLUE(self):
+        return Color((0, 128, 255))
+    
+    @property
+    def BLUE(self):
+        return Color((0, 0, 255))
+    
+    @property
+    def PURPLE(self):
+        return Color((127, 0, 255))
+    
+    @property
+    def PINK(self):
+        return Color((255, 0, 255))
+    
+    @property
+    def HOTPINK(self):
+        return Color((255, 0, 127))
+    
+    @property
+    def GRAY(self):
+        return Color((128, 128, 128))
+    
+COLORS = _COLORS()
