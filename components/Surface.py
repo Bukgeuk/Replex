@@ -123,27 +123,27 @@ class Surface(InteractiveComponent):
 
     @final
     def drawTextBox(self, textBox: TextBox):
-        size = textBox.getSize()
-        b = textBox.getBorderThickness()
-        pos = textBox.getPos()
-        font = textBox.getFont()
-        self.drawRect(textBox.getBorderColor(), pos, (size[0] + (b * 2), size[1] + (b * 2)))
-        self.drawRect(textBox.getBackgroundColor(), (pos[0] + b, pos[1] + b), size)
+        size = textBox.size
+        b = textBox.borderThickness
+        pos = textBox.pos
+        font = textBox.font
+        self.drawRect(textBox.borderColor, pos, (size[0] + (b * 2), size[1] + (b * 2)))
+        self.drawRect(textBox.backgroundColor, (pos[0] + b, pos[1] + b), size)
         if not font is None:
-            self.drawTextByFont((pos[0] + (size[0] / 2), pos[1] + (size[1] / 2)), textBox.getText(), font, textBox.getTextColor(), position=Position.CENTER)
+            self.drawTextByFont((pos[0] + (size[0] / 2), pos[1] + (size[1] / 2)), textBox.text, font, textBox.textColor, position=Position.CENTER)
 
         self.__eventObjects.append(textBox)
 
     @final
     def drawButton(self, button: Button):
-        size = button.getSize()
-        b = button.getBorderThickness()
-        pos = button.getPos()
-        font = button.getFont()
-        self.drawRect(button.getBorderColor(), pos, (size[0] + (b * 2), size[1] + (b * 2)))
-        self.drawRect(button.getBackgroundRenderColor(), (pos[0] + b, pos[1] + b), size)
+        size = button.size
+        b = button.borderThickness
+        pos = button.pos
+        font = button.font
+        self.drawRect(button.borderColor, pos, (size[0] + (b * 2), size[1] + (b * 2)))
+        self.drawRect(button.backgroundRenderColor, (pos[0] + b, pos[1] + b), size)
         if not font is None:
-            self.drawTextByFont((pos[0] + (size[0] / 2), pos[1] + (size[1] / 2)), button.getText(), font, button.getTextRenderColor(), position=Position.CENTER)
+            self.drawTextByFont((pos[0] + (size[0] / 2), pos[1] + (size[1] / 2)), button.text, font, button.textRenderColor, position=Position.CENTER)
 
         self.__eventObjects.append(button)
 
@@ -184,9 +184,9 @@ class Surface(InteractiveComponent):
         for obj in self.__eventObjects:
             if obj.doEventSpread(event.pos):
                 obj.onMouseMove(event)
-                if not obj.isMouseEntered():
+                if not obj.isMouseEntered:
                     obj.onMouseEnter(event)
-            elif obj.isMouseEntered():
+            elif obj.isMouseEntered:
                 obj.onMouseLeave(event)
 
     def onMouseEnter(self, event) -> None:

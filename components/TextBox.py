@@ -21,51 +21,56 @@ class TextBox(InteractiveComponent):
         else:
             self.__font = getFont(fontName)
 
-    def setText(self, text: str) -> TextBox:
-        self.__text = text
-        return self
-
-    def getText(self) -> str:
+    @property
+    def text(self) -> str:
         return self.__text
 
-    def setTextColor(self, color: Color) -> TextBox:
-        self.__textColor = color
-        return self
+    @text.setter
+    def text(self, text: str):
+        self.__text = text
     
-    def getTextColor(self) -> Color:
+    @property
+    def textColor(self) -> Color:
         return self.__textColor
     
-    def setBackgroundColor(self, color: Color) -> TextBox:
-        self.__backgroundColor = color
-        return self
+    @textColor.setter
+    def textColor(self, color: Color):
+        self.__textColor = color
     
-    def getBackgroundColor(self) -> Color:
+    @property
+    def backgroundColor(self) -> Color:
         return self.__backgroundColor
     
-    def setBorderColor(self, color: Color) -> TextBox:
-        self.__borderColor = color
-        return self
+    @backgroundColor.setter
+    def setBackgroundColor(self, color: Color):
+        self.__backgroundColor = color
 
-    def getBorderColor(self) -> Color:
+    @property
+    def borderColor(self) -> Color:
         return self.__borderColor
 
-    def setBorderThickness(self, value: int) -> TextBox:
-        self.__borderThickness = value
-        return self
+    @borderColor.setter
+    def borderColor(self, color: Color):
+        self.__borderColor = color
 
-    def getBorderThickness(self) -> int:
+    @property
+    def borderThickness(self) -> int:
         return self.__borderThickness
 
-    def getFont(self) -> Optional[Font]:
+    @borderThickness.setter
+    def borderThickness(self, value: int):
+        self.__borderThickness = value
+
+    @property
+    def font(self) -> Optional[Font]:
         return self.__font
 
-    def setFont(self, font: Font) -> TextBox:
-        self.__font = font
-        return self
-
-    def setFontByName(self, fontName: str) -> TextBox:
-        self.__font = getFont(fontName)
-        return self
+    @font.setter
+    def font(self, font: Font | str):
+        if type(font) is str:
+            self.__font = getFont(font)
+        else:
+            self.__font = font
 
     def tick(self) -> None:
         pass

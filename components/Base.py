@@ -12,25 +12,30 @@ class Component:
         self.__size: Pos = size
 
     @final
-    def setPos(self, pos: Pos) -> Component:
-        self.__pos = pos
-        return self
-    
-    @final
-    def getPos(self) -> Pos:
+    @property
+    def pos(self) -> Pos:
         return self.__pos
 
     @final
-    def setSize(self, size: Pos) -> Component:
+    @pos.setter
+    def pos(self, pos: Pos):
+        self.__pos = pos
+        return self
+
+    @final
+    @property
+    def size(self) -> Pos:
+        return self.__size
+
+    @final
+    @size.setter
+    def size(self, size: Pos):
         self.__size = size
         return self
     
-    @final
-    def getSize(self) -> Pos:
-        return self.__size
-    
     def doEventSpread(self, pos: Pos) -> bool:
         return False
+    
 
 class InteractiveComponent(Component):
     def __init__(self, pos: Pos, size: Pos) -> None:
@@ -41,6 +46,7 @@ class InteractiveComponent(Component):
             self.__eventListeners[type] = []
     
     @final
+    @property
     def isMouseEntered(self) -> bool:
         return self.__isMouseEntered
     
@@ -60,8 +66,8 @@ class InteractiveComponent(Component):
         return self
 
     def doEventSpread(self, pos: Pos) -> bool:
-        cpos = self.getPos()
-        size = self.getSize()
+        cpos = self.pos
+        size = self.size
         return (cpos[0] < pos[0] < cpos[0] + size[0]) and (cpos[1] < pos[1] < cpos[1] + size[1])
 
     def onMouseDown(self, event) -> None:

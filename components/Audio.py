@@ -20,24 +20,28 @@ class Audio:
     def stop(self) -> Audio:
         self.__audio.stop()
         return self
+    
+    @property
+    def volume(self) -> float:
+        return self.__audio.get_volume()
 
-    def setVolume(self, value: float) -> Audio:
+    @volume.setter
+    def volume(self, value: float):
         '''
         volume in the range of 0.0 to 1.0\n
         If value < 0.0, the volume will not be changed\n
         If value > 1.0, the volume will be set to 1.0
         '''
         self.__audio.set_volume(value)
-        return self
 
-    def getVolume(self) -> float:
-        return self.__audio.get_volume()
-
-    def getLength(self) -> float:
+    @property
+    def length(self) -> float:
         return self.__audio.get_length()
 
-    def getNumOfChannels(self) -> int:
+    @property
+    def numOfChannels(self) -> int:
         return self.__audio.get_num_channels()
 
-    def getRawAudio(self) -> bytes:
+    @property
+    def rawAudio(self) -> bytes:
         return self.__audio.get_raw()

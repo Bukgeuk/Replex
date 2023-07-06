@@ -13,37 +13,41 @@ class Button(TextBox):
         self.__backgroundHoverColor = backgroundHoverColor
         self.__textHoverColor = textHoverColor
     
-    def setTextHoverColor(self, color: Optional[Color]) -> Button:
-        self.__textHoverColor = color
-        return self
-    
-    def getTextHoverColor(self) -> Optional[Color]:
+    @property
+    def textHoverColor(self) -> Optional[Color]:
         return self.__textHoverColor
 
-    def getTextRenderColor(self) -> Color:
+    @textHoverColor.setter
+    def textHoverColor(self, color: Optional[Color]):
+        self.__textHoverColor = color
+
+    @property
+    def textRenderColor(self) -> Color:
         '''
         Return:
             The actual rendering text color based on hover state
         '''
-        if self.isMouseEntered() and self.__textHoverColor != None:
+        if self.isMouseEntered and self.__textHoverColor != None:
             return self.__textHoverColor
         else:
-            return self.getTextColor()
+            return self.textColor
 
-    def getBackgroundRenderColor(self) -> Color:
+    @property
+    def backgroundRenderColor(self) -> Color:
         '''
         Return:
             The actual rendering background color based on hover state
         '''
-        if self.isMouseEntered() and self.__backgroundHoverColor != None:
+        if self.isMouseEntered and self.__backgroundHoverColor != None:
             return self.__backgroundHoverColor
         else:
-            return self.getBackgroundColor()
+            return self.backgroundColor
     
-    def getBackgroundHoverColor(self) -> Optional[Color]:
+    @property
+    def backgroundHoverColor(self) -> Optional[Color]:
         return self.__backgroundHoverColor
     
-    def setBackgroundHoverColor(self, color: Optional[Color]) -> Button:
+    @backgroundHoverColor.setter
+    def backgroundHoverColor(self, color: Optional[Color]):
         self.__backgroundHoverColor = color
-        return self
     

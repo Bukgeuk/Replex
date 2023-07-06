@@ -32,7 +32,7 @@ class Image(InteractiveComponent):
     @final
     def rescale(self, size: Pos) -> Image:
         self.__image = pygame.transform.scale(self.__image, size)
-        self.setSize(size)
+        self.size = size
         return self
     
     @staticmethod
