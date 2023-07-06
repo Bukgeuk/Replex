@@ -57,7 +57,7 @@ class Surface(InteractiveComponent):
 
     @final
     def drawImage(self, image: Image):
-        self.__surface.blit(image.getPygameImage(), image.getPos())
+        self.__surface.blit(image.getPygameImage(), image.pos)
 
     @final
     def drawRect(self, color: Color, pos: Pos, size: Pos, thickness: int = 0, radius: int = -1, top_left_radius: int = -1, top_right_radius: int = -1, bottom_left_radius: int = -1, bottom_right_radius: int = -1) -> None:

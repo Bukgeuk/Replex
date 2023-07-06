@@ -75,7 +75,12 @@ class App:
         pygame.quit()
         sys.exit()
 
-    def setTitle(self, title: str) -> None:
+    @property
+    def title(self) -> str:
+        return pygame.display.get_caption()[0]
+
+    @title.setter
+    def title(self, title: str) -> None:
         pygame.display.set_caption(title)
 
     def setWindowMode(self, width: int, height: int, displayMode: DisplayMode = DisplayMode.WINDOWED, resizable: bool = False, vsync: bool = False) -> None:
@@ -100,13 +105,20 @@ class App:
     def toggleFullscreen(self) -> None:
         pygame.display.toggle_fullscreen()
 
-    def setFramerate(self, framerate: int) -> None:
-        self.__framerate = framerate
-
-    def getCurrentFramerate(self) -> float:
+    @property
+    def framerate(self) -> int:
         return self.__framerate
 
-    def setScene(self, scene: Scene) -> None:
+    @framerate.setter
+    def framerate(self, framerate: int) -> None:
+        self.__framerate = framerate
+
+    @property
+    def scene(self) -> Scene | None:
+        return self.__scene
+    
+    @scene.setter
+    def scene(self, scene: Scene) -> None:
         if self.__scene is not None:
             self.__scene.onEscapeScene()
         self.__scene = scene

@@ -10,7 +10,7 @@ class Color:
             self.__r = color[0]
             self.__g = color[1]
             self.__b = color[2]
-            self.__a =  1 if len(color) < 4 else color[3]
+            self.__a =  1 if len(color) < 4 else color[3] # type: ignore
         elif type(color) is str:
             rgba = self.HEXToRGBA(color)
             self.__r = rgba[0]

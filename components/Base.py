@@ -20,7 +20,6 @@ class Component:
     @pos.setter
     def pos(self, pos: Pos):
         self.__pos = pos
-        return self
 
     @final
     @property
@@ -31,7 +30,6 @@ class Component:
     @size.setter
     def size(self, size: Pos):
         self.__size = size
-        return self
     
     def doEventSpread(self, pos: Pos) -> bool:
         return False
@@ -41,7 +39,7 @@ class InteractiveComponent(Component):
     def __init__(self, pos: Pos, size: Pos) -> None:
         super().__init__(pos, size)
         self.__isMouseEntered: bool = False
-        self.__eventListeners: Dict[EventType, List[Callable[[any]]]] = {}
+        self.__eventListeners: Dict[EventType, List[Callable[..., None]]] = {}
         for type in EventType:
             self.__eventListeners[type] = []
     
@@ -51,12 +49,12 @@ class InteractiveComponent(Component):
         return self.__isMouseEntered
     
     @final
-    def addEventListener(self, eventType: EventType, callback: Callable[[any]]) -> InteractiveComponent:
+    def addEventListener(self, eventType: EventType, callback: Callable[..., None]) -> InteractiveComponent:
         self.__eventListeners[eventType].append(callback)
         return self
     
     @final
-    def removeEventListener(self, eventType: EventType, callback: Callable[[any]]) -> InteractiveComponent:
+    def removeEventListener(self, eventType: EventType, callback: Callable[..., None]) -> InteractiveComponent:
         self.__eventListeners[eventType].remove(callback)
         return self
 
