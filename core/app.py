@@ -34,8 +34,6 @@ class App:
         self.__scene.onEnterScene()
 
         while not self.__terminate:
-            renewFramerate(self.__framerate)
-
             # Event handling
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -112,6 +110,7 @@ class App:
 
     @framerate.setter
     def framerate(self, framerate: int) -> None:
+        renewFramerate(self.__framerate)
         self.__framerate = framerate
 
     @property
