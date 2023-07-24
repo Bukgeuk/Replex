@@ -39,10 +39,13 @@ class Surface(InteractiveComponent):
     def registerDrawing(self, zindex: int, callback: Callable[..., None]):
         if zindex is None or callback is None:
             raise ValueError("Cannot register invalid value")
+        elif zindex < 0:
+            raise ValueError("z-index must be larger than 0")
         
-        if self.__zIndex[zindex] is None:
-            self.__zIndex[zindex] = []
-
+        if zindex >= len(self.__zIndex):
+            for _ in range(zindex - len(self.__zIndex) + 1):
+                self.__zIndex.append([])
+                
         self.__zIndex[zindex].append(callback)
 
     @final
