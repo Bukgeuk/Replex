@@ -6,7 +6,7 @@ from typing import List, Optional, final, Callable
 import pygame
 
 from ..utils.font import getFont
-from .Base import InteractiveComponent, int2d, float2d
+from .Base import InteractiveComponent, int2d, float2d, Component
 from ..utils.position import Position
 from ..utils.font import Font
 from ..utils.color import Color
@@ -25,15 +25,18 @@ class Surface(InteractiveComponent):
         self.__surface = pygame.Surface(size)
         self.__tickObjects: List[Surface] = []
         self.__eventObjects: List[InteractiveComponent] = []
-        self.__zIndex: List[List[Callable[..., None]]] = []
+        self.__zIndexCallbackList: List[List[Callable[..., None]]] = []
+        self.__zIndexLock: bool = False
 
     @final
     def render(self):
-        for index in self.__zIndex:
+        self.__zIndexLock = True
+        for index in self.__zIndexCallbackList:
             for callback in index:
                 callback()
                 
-        self.__zIndex.clear()
+        self.__zIndexCallbackList.clear()
+        self.__zIndexLock = False
 
     @final
     def registerDrawing(self, zindex: int, callback: Callable[..., None]):
@@ -42,11 +45,11 @@ class Surface(InteractiveComponent):
         elif zindex < 0:
             raise ValueError("z-index must be larger than 0")
         
-        if zindex >= len(self.__zIndex):
-            for _ in range(zindex - len(self.__zIndex) + 1):
-                self.__zIndex.append([])
-                
-        self.__zIndex[zindex].append(callback)
+        if zindex >= len(self.__zIndexCallbackList):
+            for _ in range(zindex - len(self.__zIndexCallbackList) + 1):
+                self.__zIndexCallbackList.append([])
+
+        self.__zIndexCallbackList[zindex].append(callback)
 
     @final
     def getPygameSurface(self):
@@ -187,6 +190,9 @@ class Surface(InteractiveComponent):
 
     @final
     def drawTextBox(self, textBox: TextBox, zindex: Optional[int] = None):
+        if not self.__zIndexLock:
+            textBox.zIndex = zindex
+
         if zindex is not None:
             self.registerDrawing(zindex, lambda: self.drawTextBox(textBox))
             return
@@ -204,6 +210,9 @@ class Surface(InteractiveComponent):
 
     @final
     def drawButton(self, button: Button, zindex: Optional[int] = None):
+        if not self.__zIndexLock:
+            button.zIndex = zindex
+
         if zindex is not None:
             self.registerDrawing(zindex, lambda: self.drawButton(button))
             return
@@ -221,6 +230,9 @@ class Surface(InteractiveComponent):
 
     @final
     def drawTextInput(self, textInput: TextInput, zindex: Optional[int] = None):
+        if not self.__zIndexLock:
+            textInput.zIndex = zindex
+
         if zindex is not None:
             self.registerDrawing(zindex, lambda: self.drawTextBox(textInput))
             return
@@ -229,6 +241,9 @@ class Surface(InteractiveComponent):
 
     @final
     def drawCameraCapture(self, capture: CameraCapture, zindex: Optional[int] = None):
+        if not self.__zIndexLock:
+            capture.zIndex = zindex
+
         if zindex is not None:
             self.registerDrawing(zindex, lambda: self.drawCameraCapture(capture))
             return
@@ -236,6 +251,9 @@ class Surface(InteractiveComponent):
 
     @final
     def drawContainer(self, container: Container, zindex: Optional[int] = None):
+        if not self.__zIndexLock:
+            container.zIndex = zindex
+
         if zindex is not None:
             self.registerDrawing(zindex, lambda: self.drawContainer(container))
             return
@@ -255,34 +273,78 @@ class Surface(InteractiveComponent):
     def onMouseDown(self, event) -> None:
         super().onMouseDown(event)
 
+        temp: Optional[Component] = None
+
         for obj in self.__eventObjects:
             if obj.doEventSpread(event.pos):
-                obj.onMouseDown(event)
+                if temp is None:
+                    temp = obj
+                elif temp.zIndex is None:
+                    temp = obj
+                elif temp.zIndex is not None and obj.zIndex is not None:
+                    if temp.zIndex <= obj.zIndex:
+                        temp = obj
+        
+        if temp is not None:
+            temp.onMouseDown(event)
 
     def onMouseUp(self, event) -> None:
         super().onMouseUp(event)
 
+        temp: Optional[Component] = None
+
         for obj in self.__eventObjects:
             if obj.doEventSpread(event.pos):
-                obj.onMouseUp(event)
+                if temp is None:
+                    temp = obj
+                elif temp.zIndex is None:
+                    temp = obj
+                elif temp.zIndex is not None and obj.zIndex is not None:
+                    if temp.zIndex <= obj.zIndex:
+                        temp = obj
+        
+        if temp is not None:
+            temp.onMouseUp(event)
 
     def onMouseWheel(self, event) -> None:
         super().onMouseWheel(event)
         
+        temp: Optional[Component] = None
+
         for obj in self.__eventObjects:
             if obj.doEventSpread(event.pos):
-                obj.onMouseWheel(event)
+                if temp is None:
+                    temp = obj
+                elif temp.zIndex is None:
+                    temp = obj
+                elif temp.zIndex is not None and obj.zIndex is not None:
+                    if temp.zIndex <= obj.zIndex:
+                        temp = obj
+        
+        if temp is not None:
+            temp.onMouseWheel(event)
 
     def onMouseMove(self, event) -> None:
         super().onMouseMove(event)
 
+        temp: Optional[Component] = None
+
         for obj in self.__eventObjects:
             if obj.doEventSpread(event.pos):
-                obj.onMouseMove(event)
-                if not obj.isMouseEntered:
-                    obj.onMouseEnter(event)
+                if temp is None:
+                    temp = obj
+                elif temp.zIndex is None:
+                    temp = obj
+                elif temp.zIndex is not None and obj.zIndex is not None:
+                    if temp.zIndex <= obj.zIndex:
+                        temp = obj
             elif obj.isMouseEntered:
                 obj.onMouseLeave(event)
+        
+        if temp is not None:
+            temp.onMouseMove(event)
+            if not temp.isMouseEntered:
+                temp.onMouseEnter(event)
 
     def onMouseEnter(self, event) -> None:
         super().onMouseEnter(event)

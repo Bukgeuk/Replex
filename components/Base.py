@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import final, Callable, Dict, List
+from typing import final, Callable, Dict, List, Optional
 from ..utils.event import EventType
 from ..utils.position import int2d, float2d
 
@@ -10,6 +10,7 @@ class Component:
     def __init__(self, pos: float2d, size: int2d) -> None:
         self.__pos: float2d = pos
         self.__size: int2d = size
+        self.__zIndex: Optional[int] = None
 
     @final
     @property
@@ -30,6 +31,16 @@ class Component:
     @size.setter
     def size(self, size: int2d):
         self.__size = size
+       
+    @final
+    @property
+    def zIndex(self) -> Optional[int]:
+        return self.__zIndex
+    
+    @final
+    @zIndex.setter
+    def zIndex(self, zindex: Optional[int]):
+        self.__zIndex = zindex
 
     @final
     def vw(self, radio: float) -> int:
