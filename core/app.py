@@ -60,6 +60,7 @@ class App:
             # Drawing
             self.__scene.tick()
             self.__scene.draw()
+            self.__scene.render()
 
             assert self.__pygameSurface is not None, 'Use setWindowMode before running'
 
