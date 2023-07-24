@@ -7,4 +7,3 @@ from .Surface import *
 from .TextBox import *
 from .TextInput import *
 from .CameraCapture import *
-from .Container import *

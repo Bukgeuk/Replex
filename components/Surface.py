@@ -1,6 +1,7 @@
 from __future__ import annotations
+from abc import ABCMeta, abstractmethod
 from typing import List, Optional, final, Callable
-from copy import deepcopy
+#from copy import deepcopy
 
 import pygame
 
@@ -14,9 +15,9 @@ from .Button import Button
 from .TextBox import TextBox
 from .TextInput import TextInput
 from .CameraCapture import CameraCapture
-from .Container import Container
 
-__all__ = ['Surface']
+__all__ = ['Surface', 'Container']
+
 
 class Surface(InteractiveComponent):
     def __init__(self, pos: float2d, size: int2d) -> None:
@@ -297,3 +298,14 @@ class Surface(InteractiveComponent):
 
         for obj in self.__eventObjects:
             obj.onKeyUp(event)
+
+class Container(Surface, metaclass=ABCMeta):
+    def __init__(self, size: int2d) -> None:
+        super().__init__((0, 0), size)
+
+    @abstractmethod
+    def draw(self):
+        pass
+
+    def tick(self):
+        super().tick()
