@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional
 from .Base import InteractiveComponent
-from ..utils.position import Pos
+from ..utils.position import float2d, int2d
 from ..utils.font import Font, getFont
 from ..utils.color import Color, COLORS
 from ..utils.style import ComponentStyle
@@ -24,7 +24,7 @@ class TextBoxStyle(ComponentStyle):
         self.borderThickness = borderThickness
 
 class TextBox(InteractiveComponent):
-    def __init__(self, pos: Pos, size: Pos, style: TextBoxStyle, text: str = '') -> None:
+    def __init__(self, pos: float2d, size: int2d, style: TextBoxStyle, text: str = '') -> None:
         super().__init__(pos, size)
         self.__text = text
         self.__textColor = style.textColor

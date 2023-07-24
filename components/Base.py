@@ -2,33 +2,33 @@ from __future__ import annotations
 
 from typing import final, Callable, Dict, List
 from ..utils.event import EventType
-from ..utils.position import Pos
+from ..utils.position import int2d, float2d
 
 __all__ = ['Component', 'InteractiveComponent']
 
 class Component:
-    def __init__(self, pos: Pos, size: Pos) -> None:
-        self.__pos: Pos = pos
-        self.__size: Pos = size
+    def __init__(self, pos: float2d, size: int2d) -> None:
+        self.__pos: float2d = pos
+        self.__size: int2d = size
 
     @final
     @property
-    def pos(self) -> Pos:
+    def pos(self) -> float2d:
         return self.__pos
 
     @final
     @pos.setter
-    def pos(self, pos: Pos):
+    def pos(self, pos: float2d):
         self.__pos = pos
 
     @final
     @property
-    def size(self) -> Pos:
+    def size(self) -> int2d:
         return self.__size
 
     @final
     @size.setter
-    def size(self, size: Pos):
+    def size(self, size: int2d):
         self.__size = size
 
     @final
@@ -57,12 +57,12 @@ class Component:
         else:
             return int(self.size[1] * radio)
     
-    def doEventSpread(self, pos: Pos) -> bool:
+    def doEventSpread(self, pos: float2d) -> bool:
         return False
     
 
 class InteractiveComponent(Component):
-    def __init__(self, pos: Pos, size: Pos) -> None:
+    def __init__(self, pos: float2d, size: int2d) -> None:
         super().__init__(pos, size)
         self.__isMouseEntered: bool = False
         self.__eventListeners: Dict[EventType, List[Callable[..., None]]] = {}
@@ -89,7 +89,7 @@ class InteractiveComponent(Component):
         self.__eventListeners[eventType].clear()
         return self
 
-    def doEventSpread(self, pos: Pos) -> bool:
+    def doEventSpread(self, pos: float2d) -> bool:
         cpos = self.pos
         size = self.size
         return (cpos[0] < pos[0] < cpos[0] + size[0]) and (cpos[1] < pos[1] < cpos[1] + size[1])

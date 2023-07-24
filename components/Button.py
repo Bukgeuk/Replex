@@ -3,7 +3,7 @@ from typing import Optional
 
 from Replex.utils.color import Color, COLORS
 from Replex.utils.font import Font
-from .Base import Pos
+from .Base import float2d, int2d
 from .TextBox import TextBox, TextBoxStyle
 
 __all__ = ['Button', 'ButtonStyle']
@@ -18,7 +18,7 @@ class ButtonStyle(TextBoxStyle):
         self.textHoverColor = textHoverColor
 
 class Button(TextBox):
-    def __init__(self, pos: Pos, size: Pos, style: ButtonStyle, text: str = '') -> None:
+    def __init__(self, pos: float2d, size: int2d, style: ButtonStyle, text: str = '') -> None:
         super().__init__(pos, size, style, text)
         self.__backgroundHoverColor = style.backgroundHoverColor
         self.__textHoverColor = style.textHoverColor

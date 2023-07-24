@@ -1,10 +1,11 @@
 from __future__ import annotations
 from typing import List, Optional, final
+from copy import deepcopy
 
 import pygame
 
 from ..utils.font import getFont
-from .Base import InteractiveComponent, Pos
+from .Base import InteractiveComponent, int2d, float2d
 from ..utils.position import Position
 from ..utils.font import Font
 from ..utils.color import Color
@@ -12,11 +13,13 @@ from .Image import Image
 from .Button import Button
 from .TextBox import TextBox
 from .TextInput import TextInput
+from .CameraCapture import CameraCapture
+from .Container import Container
 
 __all__ = ['Surface']
 
 class Surface(InteractiveComponent):
-    def __init__(self, pos: Pos, size: Pos) -> None:
+    def __init__(self, pos: float2d, size: int2d) -> None:
         super().__init__(pos, size)
         self.__surface = pygame.Surface(size)
         self.__tickObjects: List[Surface] = []
@@ -31,7 +34,7 @@ class Surface(InteractiveComponent):
         self.__surface.fill(color.rgba)
 
     @final
-    def drawTextByFont(self, pos: Pos, text: str, font: Font, color: Color, antialias: bool = True, position: Position = Position.TOPLEFT) -> None:
+    def drawTextByFont(self, pos: float2d, text: str, font: Font, color: Color, antialias: bool = True, position: Position = Position.TOPLEFT) -> None:
         image = font.render(text, antialias, color.rgba)
         rect = image.get_rect()
         v = (round(pos[0]), round(pos[1]))
@@ -50,7 +53,7 @@ class Surface(InteractiveComponent):
         self.__surface.blit(image, rect)
 
     @final
-    def drawTextByFontName(self, pos: Pos, text: str, fontName: str, color: Color, antialias: bool = True, position: Position = Position.TOPLEFT) -> None:
+    def drawTextByFontName(self, pos: float2d, text: str, fontName: str, color: Color, antialias: bool = True, position: Position = Position.TOPLEFT) -> None:
         font = getFont(fontName)
         if font is not None:
             self.drawTextByFont(pos, text, font, color, antialias, position)
@@ -60,7 +63,7 @@ class Surface(InteractiveComponent):
         self.__surface.blit(image.getPygameImage(), image.pos)
 
     @final
-    def drawRect(self, color: Color, pos: Pos, size: Pos, thickness: int = 0, radius: int = -1, top_left_radius: int = -1, top_right_radius: int = -1, bottom_left_radius: int = -1, bottom_right_radius: int = -1) -> None:
+    def drawRect(self, color: Color, pos: float2d, size: int2d, thickness: int = 0, radius: int = -1, top_left_radius: int = -1, top_right_radius: int = -1, bottom_left_radius: int = -1, bottom_right_radius: int = -1) -> None:
         '''
         if thickness is 0, it will draw filled rectangle.\n
         if top_left_radius, top_right_radius, bottom_left_radius, bottom_right_radius < 0, it will use radius value.\n
@@ -69,7 +72,7 @@ class Surface(InteractiveComponent):
         pygame.draw.rect(self.__surface, color.rgba, ((pos[0], pos[1]), (size[0], size[1])), thickness)
 
     @final
-    def drawCircle(self, color: Color, pos: Pos, radius: int, thickness: int = 0, draw_top_right: Optional[bool] = None, draw_top_left: Optional[bool] = None, draw_bottom_left: Optional[bool] = None, draw_bottom_right: Optional[bool] = None) -> None:
+    def drawCircle(self, color: Color, pos: float2d, radius: int, thickness: int = 0, draw_top_right: Optional[bool] = None, draw_top_left: Optional[bool] = None, draw_bottom_left: Optional[bool] = None, draw_bottom_right: Optional[bool] = None) -> None:
         '''
         if thickness is 0, it will draw filled circle.\n
         nothing will be drawn if the radius is less than 1
@@ -77,21 +80,21 @@ class Surface(InteractiveComponent):
         pygame.draw.circle(self.__surface, color.rgba, pos, radius, thickness, draw_top_right, draw_top_left, draw_bottom_right, draw_bottom_left)
     
     @final
-    def drawEllipse(self, color: Color, pos: Pos, size: Pos, thickness: int = 0) -> None:
+    def drawEllipse(self, color: Color, pos: float2d, size: int2d, thickness: int = 0) -> None:
         '''
         if thickness is 0, it will draw filled ellipse.
         '''
         pygame.draw.ellipse(self.__surface, color.rgba, ((pos[0], pos[1]), (size[0], size[1])), thickness)
 
     @final
-    def drawLine(self, color: Color, start_pos: Pos, end_pos: Pos, thickness: int = 1) -> None:
+    def drawLine(self, color: Color, start_pos: float2d, end_pos: float2d, thickness: int = 1) -> None:
         '''
         if thickness < 1, nothing will be drawn.
         '''
         pygame.draw.line(self.__surface, color.rgba, start_pos, end_pos, thickness)
 
     @final
-    def drawLines(self, color: Color, points: List[Pos], closed: bool = False, thickness: int = 1) -> None:
+    def drawLines(self, color: Color, points: List[float2d], closed: bool = False, thickness: int = 1) -> None:
         '''
         if thickness < 1, nothing will be drawn.\n
         if closed is True, an additional line segment is drawn between the first and last points in the points sequence.
@@ -99,18 +102,18 @@ class Surface(InteractiveComponent):
         pygame.draw.lines(self.__surface, color.rgba, closed, points, thickness)
 
     @final
-    def drawAntialiasedLine(self, color: Color, start_pos: Pos, end_pos: Pos, blend: int = 1) -> None:
+    def drawAntialiasedLine(self, color: Color, start_pos: float2d, end_pos: float2d, blend: int = 1) -> None:
         pygame.draw.aaline(self.__surface, color.rgba, start_pos, end_pos, blend)
 
     @final
-    def drawAntialiasedLines(self, color: Color, points: List[Pos], closed: bool = False, blend: int = 1) -> None:
+    def drawAntialiasedLines(self, color: Color, points: List[float2d], closed: bool = False, blend: int = 1) -> None:
         '''
         if closed is True, an additional line segment is drawn between the first and last points in the points sequence.
         '''
         pygame.draw.aalines(self.__surface, color.rgba, closed, points, blend)
 
     @final
-    def drawSurface(self, surface: Surface, pos: Pos):
+    def drawSurface(self, surface: Surface, pos: float2d):
         self.__surface.blit(surface.getPygameSurface(), pos)
         self.__tickObjects.append(surface)
         self.__eventObjects.append(surface)
@@ -150,6 +153,14 @@ class Surface(InteractiveComponent):
     @final
     def drawTextInput(self, textInput: TextInput):
         self.drawTextBox(textInput)
+
+    @final
+    def drawCameraCapture(self, capture: CameraCapture):
+        self.__surface.blit(capture.image, capture.pos)
+
+    @final
+    def drawContainer(self, container: Container):
+        self.drawSurface(container, container.pos)
 
     def tick(self):
         for obj in self.__tickObjects:

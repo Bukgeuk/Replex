@@ -1,9 +1,10 @@
 from typing import Tuple
 from enum import Enum
 
-__all__ = ['Pos', 'Position']
+__all__ = ['float2d', 'int2d', 'Position']
 
-Pos = Tuple[float, float]
+float2d = Tuple[float, float]
+int2d = Tuple[int, int]
 
 class Position(Enum):
     CENTER = 0

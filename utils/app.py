@@ -1,6 +1,7 @@
 from typing import Optional, Tuple, List
 from screeninfo import screeninfo
 from enum import Enum
+from .position import int2d
 
 __currentFps: Optional[float] = None
 __windowSize: Tuple[int, int] = (0, 0)
@@ -11,7 +12,7 @@ def renewFramerate(value: float) -> None:
     global __currentFps
     __currentFps = value
 
-def renewWindowSize(value: Tuple[int, int]) -> None:
+def renewWindowSize(value: int2d) -> None:
     global __windowSize
     __windowSize = value
 
@@ -21,7 +22,7 @@ def getCurrentFramerate() -> Optional[float]:
     else:
         return None
 
-def getMonitorSize() -> List[Tuple[int, int]]:
+def getMonitorSize() -> List[int2d]:
     '''
     Return:
         List of (width, height)
