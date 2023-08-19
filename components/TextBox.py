@@ -11,11 +11,11 @@ __all__ = ['TextBox', 'TextBoxStyle']
 class TextBoxStyle(ComponentStyle):
     font: Font | str
     textColor: Color
-    backgroundColor: Color
-    borderColor: Color
+    backgroundColor: Optional[Color]
+    borderColor: Optional[Color]
     borderThickness: int
 
-    def __init__(self, font: Font | str, textColor: Color = COLORS.BLACK, backgroundColor: Color = COLORS.WHITE, borderColor: Color = COLORS.BLACK, borderThickness: int = 1) -> None:
+    def __init__(self, font: Font | str, textColor: Color = COLORS.BLACK, backgroundColor: Optional[Color] = COLORS.WHITE, borderColor: Optional[Color] = COLORS.BLACK, borderThickness: int = 1) -> None:
         super().__init__()
         self.font = font
         self.textColor = textColor
