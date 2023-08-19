@@ -13,7 +13,7 @@ def getCameraList() -> List[str]:
 class CameraCapture(Component):
     def __init__(self, pos: float2d, size: int2d, device: str, hflip: bool = True, vflip: bool = False) -> None:
         super().__init__(pos, size)
-        if str not in getCameraList():
+        if device not in getCameraList():
             raise ValueError("Invalid device name")
         self.__cam = pygame.camera.Camera(device, size)
         self.__cam.start()
