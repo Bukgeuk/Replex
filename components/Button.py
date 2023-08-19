@@ -12,7 +12,7 @@ class ButtonStyle(TextBoxStyle):
     backgroundHoverColor: Optional[Color] = None
     textHoverColor: Optional[Color] = None
 
-    def __init__(self, font: Font | str, textColor: Color = COLORS.BLACK, backgroundColor: Color = COLORS.WHITE, borderColor: Color = COLORS.BLACK, borderThickness: int = 1, backgroundHoverColor: Optional[Color] = None, textHoverColor: Optional[Color] = None) -> None:
+    def __init__(self, font: Font | str, textColor: Color = COLORS.BLACK, backgroundColor: Optional[Color] = COLORS.WHITE, borderColor: Optional[Color] = COLORS.BLACK, borderThickness: int = 1, backgroundHoverColor: Optional[Color] = None, textHoverColor: Optional[Color] = None) -> None:
         super().__init__(font, textColor, backgroundColor, borderColor, borderThickness)
         self.backgroundHoverColor = backgroundHoverColor
         self.textHoverColor = textHoverColor
@@ -43,7 +43,7 @@ class Button(TextBox):
             return self.textColor
 
     @property
-    def backgroundRenderColor(self) -> Color:
+    def backgroundRenderColor(self) -> Optional[Color]:
         '''
         Return:
             The actual rendering background color based on hover state

@@ -10,13 +10,21 @@ class Color:
             self.__r = color[0]
             self.__g = color[1]
             self.__b = color[2]
-            self.__a =  1 if len(color) < 4 else color[3] # type: ignore
+            if len(color) < 4: self.__a = 255
+            elif 0 < color[3] < 1:
+                self.__a = int(255 * color[3])
+            else:
+                self.__a = color[3]
         elif type(color) is str:
             rgba = self.HEXToRGBA(color)
             self.__r = rgba[0]
             self.__g = rgba[1]
             self.__b = rgba[2]
-            self.__a = rgba[3]
+
+            if 0 < rgba[3] < 1:
+                self.__a = int(255 * rgba[3])
+            else:
+                self.__a = rgba[3]
 
     @property
     def rgba(self) -> Tuple[int, int, int, int]:

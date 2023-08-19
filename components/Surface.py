@@ -39,6 +39,11 @@ class Surface(InteractiveComponent):
         self.__zIndexLock = False
 
     @final
+    def __createTransparentPygameSurface(self) -> pygame.Surface:
+        s = pygame.Surface(self.size, pygame.SRCALPHA)
+        return s.convert_alpha()
+
+    @final
     def registerDrawing(self, zindex: int, callback: Callable[..., None]):
         if zindex is None or callback is None:
             raise ValueError("Cannot register invalid value")
@@ -60,8 +65,11 @@ class Surface(InteractiveComponent):
         if zindex is not None:
             self.registerDrawing(zindex, lambda: self.fill(color))
             return
-
-        self.__surface.fill(color.rgba)
+        
+        s = self.__createTransparentPygameSurface()
+        s.fill(color.rgba)
+        s.set_alpha(color.rgba[3])
+        self.__surface.blit(s, (0,0))
 
     @final
     def drawTextByFont(self, pos: float2d, text: str, font: Font, color: Color, antialias: bool = True, position: Position = Position.TOPLEFT, zindex: Optional[int] = None) -> None:
@@ -70,6 +78,8 @@ class Surface(InteractiveComponent):
             return
 
         image = font.render(text, antialias, color.rgba)
+        image.set_alpha(color.rgba[3])
+
         rect = image.get_rect()
         v = (round(pos[0]), round(pos[1]))
 
@@ -115,7 +125,10 @@ class Surface(InteractiveComponent):
             self.registerDrawing(zindex, lambda: self.drawRect(color, pos, size, thickness, radius, top_left_radius, top_right_radius, bottom_left_radius, bottom_right_radius))
             return
 
-        pygame.draw.rect(self.__surface, color.rgba, ((pos[0], pos[1]), (size[0], size[1])), thickness)
+        s = self.__createTransparentPygameSurface()
+        pygame.draw.rect(s, color.rgba, ((pos[0], pos[1]), (size[0], size[1])), thickness)
+        s.set_alpha(color.rgba[3])
+        self.__surface.blit(s, (0,0))
 
     @final
     def drawCircle(self, color: Color, pos: float2d, radius: int, thickness: int = 0, draw_top_right: Optional[bool] = None, draw_top_left: Optional[bool] = None, draw_bottom_left: Optional[bool] = None, draw_bottom_right: Optional[bool] = None, zindex: Optional[int] = None) -> None:
@@ -127,7 +140,10 @@ class Surface(InteractiveComponent):
             self.registerDrawing(zindex, lambda: self.drawCircle(color, pos, radius, thickness, draw_top_right, draw_top_left, draw_bottom_left, draw_bottom_right))
             return
 
-        pygame.draw.circle(self.__surface, color.rgba, pos, radius, thickness, draw_top_right, draw_top_left, draw_bottom_right, draw_bottom_left)
+        s = self.__createTransparentPygameSurface()
+        pygame.draw.circle(s, color.rgba, pos, radius, thickness, draw_top_right, draw_top_left, draw_bottom_right, draw_bottom_left)
+        s.set_alpha(color.rgba[3])
+        self.__surface.blit(s, (0,0))
     
     @final
     def drawEllipse(self, color: Color, pos: float2d, size: int2d, thickness: int = 0, zindex: Optional[int] = None) -> None:
@@ -138,7 +154,10 @@ class Surface(InteractiveComponent):
             self.registerDrawing(zindex, lambda: self.drawEllipse(color, pos, size, thickness))
             return
 
-        pygame.draw.ellipse(self.__surface, color.rgba, ((pos[0], pos[1]), (size[0], size[1])), thickness)
+        s = self.__createTransparentPygameSurface()
+        pygame.draw.ellipse(s, color.rgba, ((pos[0], pos[1]), (size[0], size[1])), thickness)
+        s.set_alpha(color.rgba[3])
+        self.__surface.blit(s, (0,0))
 
     @final
     def drawLine(self, color: Color, start_pos: float2d, end_pos: float2d, thickness: int = 1, zindex: Optional[int] = None) -> None:
@@ -149,7 +168,10 @@ class Surface(InteractiveComponent):
             self.registerDrawing(zindex, lambda: self.drawLine(color, start_pos, end_pos, thickness))
             return
 
-        pygame.draw.line(self.__surface, color.rgba, start_pos, end_pos, thickness)
+        s = self.__createTransparentPygameSurface()
+        pygame.draw.line(s, color.rgba, start_pos, end_pos, thickness)
+        s.set_alpha(color.rgba[3])
+        self.__surface.blit(s, (0,0))
 
     @final
     def drawLines(self, color: Color, points: List[float2d], closed: bool = False, thickness: int = 1, zindex: Optional[int] = None) -> None:
@@ -161,7 +183,10 @@ class Surface(InteractiveComponent):
             self.registerDrawing(zindex, lambda: self.drawLines(color, points, closed, thickness))
             return
 
-        pygame.draw.lines(self.__surface, color.rgba, closed, points, thickness)
+        s = self.__createTransparentPygameSurface()
+        pygame.draw.lines(s, color.rgba, closed, points, thickness)
+        s.set_alpha(color.rgba[3])
+        self.__surface.blit(s, (0,0))
 
     @final
     def drawAntialiasedLine(self, color: Color, start_pos: float2d, end_pos: float2d, blend: int = 1, zindex: Optional[int] = None) -> None:
@@ -169,7 +194,10 @@ class Surface(InteractiveComponent):
             self.registerDrawing(zindex, lambda: self.drawAntialiasedLine(color, start_pos, end_pos, blend))
             return
 
-        pygame.draw.aaline(self.__surface, color.rgba, start_pos, end_pos, blend)
+        s = self.__createTransparentPygameSurface()
+        pygame.draw.aaline(s, color.rgba, start_pos, end_pos, blend)
+        s.set_alpha(color.rgba[3])
+        self.__surface.blit(s, (0,0))
 
     @final
     def drawAntialiasedLines(self, color: Color, points: List[float2d], closed: bool = False, blend: int = 1, zindex: Optional[int] = None) -> None:
@@ -180,7 +208,10 @@ class Surface(InteractiveComponent):
             self.registerDrawing(zindex, lambda: self.drawAntialiasedLines(color, points, closed, blend))
             return
 
-        pygame.draw.aalines(self.__surface, color.rgba, closed, points, blend)
+        s = self.__createTransparentPygameSurface()
+        pygame.draw.aalines(s, color.rgba, closed, points, blend)
+        s.set_alpha(color.rgba[3])
+        self.__surface.blit(s, (0,0))
 
     '''@final
     def drawDynamicObject(self, obj: DynamicObject):
@@ -201,9 +232,11 @@ class Surface(InteractiveComponent):
         b = textBox.borderThickness
         pos = textBox.pos
         font = textBox.font
-        self.drawRect(textBox.borderColor, pos, (size[0] + (b * 2), size[1] + (b * 2)))
-        self.drawRect(textBox.backgroundColor, (pos[0] + b, pos[1] + b), size)
-        if not font is None:
+        if textBox.borderColor is not None:
+            self.drawRect(textBox.borderColor, pos, (size[0] + (b * 2), size[1] + (b * 2)))
+        if textBox.backgroundColor is not None:
+            self.drawRect(textBox.backgroundColor, (pos[0] + b, pos[1] + b), size)
+        if font is not None:
             self.drawTextByFont((pos[0] + (size[0] / 2), pos[1] + (size[1] / 2)), textBox.text, font, textBox.textColor, position=Position.CENTER)
 
         self.__eventObjects.append(textBox)
@@ -221,9 +254,11 @@ class Surface(InteractiveComponent):
         b = button.borderThickness
         pos = button.pos
         font = button.font
-        self.drawRect(button.borderColor, pos, (size[0] + (b * 2), size[1] + (b * 2)))
-        self.drawRect(button.backgroundRenderColor, (pos[0] + b, pos[1] + b), size)
-        if not font is None:
+        if button.borderColor is not None:
+            self.drawRect(button.borderColor, pos, (size[0] + (b * 2), size[1] + (b * 2)))
+        if button.backgroundRenderColor is not None:
+            self.drawRect(button.backgroundRenderColor, (pos[0] + b, pos[1] + b), size)
+        if font is not None:
             self.drawTextByFont((pos[0] + (size[0] / 2), pos[1] + (size[1] / 2)), button.text, font, button.textRenderColor, position=Position.CENTER)
 
         self.__eventObjects.append(button)
