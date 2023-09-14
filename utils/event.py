@@ -13,3 +13,4 @@ class EventType(Enum):
     onMouseLeave = 7
     onKeyDown = 8
     onKeyUp = 9
+    onClick = 10

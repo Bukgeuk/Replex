@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import final, Callable, Dict, List, Optional
 from ..utils.event import EventType
 from ..utils.position import int2d, float2d
+from pygame.event import Event
 
 __all__ = ['Component', 'InteractiveComponent']
 
@@ -77,6 +78,8 @@ class InteractiveComponent(Component):
         super().__init__(pos, size)
         self.__isMouseEntered: bool = False
         self.__eventListeners: Dict[EventType, List[Callable[..., None]]] = {}
+        self.__clickpos: Optional[float2d] = None
+        self.__clickbtn: Optional[int] = None
         for type in EventType:
             self.__eventListeners[type] = []
     
@@ -105,11 +108,21 @@ class InteractiveComponent(Component):
         size = self.size
         return (cpos[0] < pos[0] < cpos[0] + size[0]) and (cpos[1] < pos[1] < cpos[1] + size[1])
 
+    def onClick(self, event) -> None:
+        for callback in self.__eventListeners[EventType.onClick]:
+            callback(event)
+
     def onMouseDown(self, event) -> None:
+        self.__clickpos = event.pos
+        self.__clickbtn = event.button
         for callback in self.__eventListeners[EventType.onMouseDown]:
             callback(event)
 
     def onMouseUp(self, event) -> None:
+        if self.__clickpos == event.pos and self.__clickbtn == event.button:
+            self.onClick(Event(1026, {'pos': event.pos, 'button': event.button}))
+        self.__clickpos = None
+
         for callback in self.__eventListeners[EventType.onMouseUp]:
             callback(event)
 
@@ -118,6 +131,8 @@ class InteractiveComponent(Component):
             callback(event)
 
     def onMouseMove(self, event) -> None:
+        self.__clickpos = None
+        self.__clickbtn = None
         for callback in self.__eventListeners[EventType.onMouseMove]:
             callback(event)
     
@@ -134,6 +149,8 @@ class InteractiveComponent(Component):
         '''
         * This event doesn't work on Scene
         '''
+        self.__clickpos = None
+        self.__clickbtn = None
         self.__isMouseEntered = False
 
         for callback in self.__eventListeners[EventType.onMouseLeave]:
