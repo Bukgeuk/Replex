@@ -6,7 +6,7 @@ from .position import int2d
 __currentFps: Optional[float] = None
 __windowSize: Tuple[int, int] = (0, 0)
 
-__all__ = ['renewFramerate', 'getCurrentFramerate', 'getMonitorSize', 'DisplayMode', 'renewWindowSize', 'vw', 'vh']
+__all__ = ['renewFramerate', 'getCurrentFramerate', 'getMonitorSize', 'DisplayMode', 'renewWindowSize', 'vw', 'vh', 'getWindowSize']
 
 def renewFramerate(value: float) -> None:
     global __currentFps
@@ -17,10 +17,12 @@ def renewWindowSize(value: int2d) -> None:
     __windowSize = value
 
 def getCurrentFramerate() -> Optional[float]:
-    if not __currentFps is None:
-        return __currentFps
-    else:
-        return None
+    global __currentFps
+    return __currentFps
+
+def getWindowSize() -> int2d:
+    global __windowSize
+    return __windowSize
 
 def getMonitorSize() -> List[int2d]:
     '''
