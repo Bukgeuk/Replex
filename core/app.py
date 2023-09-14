@@ -111,7 +111,7 @@ class App:
 
     @framerate.setter
     def framerate(self, framerate: int) -> None:
-        renewFramerate(self.__framerate)
+        renewFramerate(framerate)
         self.__framerate = framerate
 
     @property
